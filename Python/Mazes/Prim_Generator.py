@@ -18,5 +18,7 @@ cx, cy = random.randint(0, dimensions[0]-1), random.randint(0, dimensions[1]-1)
 maze.select_cell(cx, cy)
 maze.add_to_maze(cx, cy)
 
+maze.select_wall(1, 1, 12)
+
 
 window.mainloop()

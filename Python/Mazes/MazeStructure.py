@@ -17,7 +17,7 @@ class MazeFrame(Frame):
         self.color_select_fill = "#3C4"
         self.color_maze_fill = "#F93"
 
-        self.color_normal_stroke = "#E93"
+        self.color_normal_stroke = "#101010"
         self.color_select_stroke = "#13F"
 
         # for dimensions = (2, 2)
@@ -67,24 +67,6 @@ class MazeFrame(Frame):
     def draw_update(self):
         # here is where we draw stuff
 
-        # Draw the vertical cell walls
-        for x in range(len(self.vertical)):
-            for y in range(len(self.vertical[x])):
-                if self.vertical[x][y] == 1:
-                    col = self.color_normal_stroke
-                if self.vertical[x][y]:
-                    self.canvas.create_line(self.border + x * self.size, self.border + y * self.size,
-                                       self.border + x * self.size, self.border + (y + 1) * self.size, fill=col)
-
-        # Draw the horizontal cell walls
-        for x in range(len(self.horizontal)):
-            for y in range(len(self.horizontal[x])):
-                if self.horizontal[x][y] == 1:
-                    col = self.color_normal_stroke
-                if self.horizontal[x][y]:
-                    self.canvas.create_line(self.border + x * self.size, self.border + y * self.size,
-                                       self.border + (x + 1) * self.size, self.border + y * self.size, fill=col)
-
         # Fill the cells
         for x in range(len(self.cells)):
             for y in range(len(self.cells[x])):
@@ -97,6 +79,30 @@ class MazeFrame(Frame):
                 self.canvas.create_rectangle(self.border + x * self.size, self.border + y * self.size,
                                         self.border + (x + 1) * self.size, self.border + (y + 1) * self.size, fill=col)
 
+
+        # Draw the vertical cell walls
+        for x in range(len(self.vertical)):
+            for y in range(len(self.vertical[x])):
+                if self.vertical[x][y] == 1:
+                    col = self.color_normal_stroke
+                elif self.vertical[x][y] == 2:
+                    col = self.color_select_stroke
+                if self.vertical[x][y]:
+                    self.canvas.create_line(self.border + x * self.size, self.border + y * self.size,
+                                       self.border + x * self.size, self.border + (y + 1) * self.size, fill=col)
+
+        # Draw the horizontal cell walls
+        for x in range(len(self.horizontal)):
+            for y in range(len(self.horizontal[x])):
+                if self.horizontal[x][y] == 1:
+                    col = self.color_normal_stroke
+                elif self.horizontal[x][y] == 2:
+                    col = self.color_select_stroke
+                if self.horizontal[x][y]:
+                    self.canvas.create_line(self.border + x * self.size, self.border + y * self.size,
+                                       self.border + (x + 1) * self.size, self.border + y * self.size, fill=col)
+
+
     def select_cell(self, x, y):
         self.cells[x][y] = 2
         self.draw_update()
@@ -104,6 +110,30 @@ class MazeFrame(Frame):
     def add_to_maze(self, x, y):
         self.cells[x][y] = 0
         self.draw_update()
+
+    def get_cell_walls(self, x, y):
+        return [self.vertical[x][y], self.vertical[x+1][y], self.horizontal[x][y], self.horizontal[x][y+1]]
+
+    # Selects the wall
+    def select_wall(self, x, y, dir):
+        # vertical wall or horizontal wall?
+        # If dir = true then vertical
+        if (dir == 12):
+            self.horizontal[x][y] = 2
+            self.draw_update()
+        elif (dir == 3):
+            self.vertical[x+1][y] = 2
+            self.draw_update()
+        elif (dir == 6):
+            self.horizontal[x][y+1] = 2
+            self.draw_update()
+        elif (dir == 9):
+            self.vertical[x][y] = 2
+            self.draw_update()
+        else:
+            print("ERROR: Unknown index in select_wall()", dir)
+
+
 
 
 
