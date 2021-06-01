@@ -18,7 +18,7 @@ class MazeFrame(Frame):
         self.color_maze_fill = "#F93"
 
         self.color_normal_stroke = "#101010"
-        self.color_select_stroke = "#13F"
+        self.color_select_stroke = "#FF0"
 
         # for dimensions = (2, 2)
         # Configure the correct number of horizontal and vertical walls
@@ -64,6 +64,12 @@ class MazeFrame(Frame):
 
         self.canvas.pack(fill=BOTH, expand=1)
 
+
+    def pressButton(self):
+        self.eraseRects()
+        self.myGame.takeAStep()
+        self.drawRects()
+
     def draw_update(self):
         # here is where we draw stuff
 
@@ -77,13 +83,15 @@ class MazeFrame(Frame):
                 elif self.cells[x][y] == 1:
                     col = self.color_normal_fill
                 self.canvas.create_rectangle(self.border + x * self.size, self.border + y * self.size,
-                                        self.border + (x + 1) * self.size, self.border + (y + 1) * self.size, fill=col)
+                                        self.border + (x + 1) * self.size, self.border + (y + 1) * self.size, fill=col, outline='')
 
 
         # Draw the vertical cell walls
         for x in range(len(self.vertical)):
             for y in range(len(self.vertical[x])):
-                if self.vertical[x][y] == 1:
+                if self.vertical[x][y] == 0:
+                    col = self.color_maze_fill
+                elif self.vertical[x][y] == 1:
                     col = self.color_normal_stroke
                 elif self.vertical[x][y] == 2:
                     col = self.color_select_stroke
@@ -94,6 +102,8 @@ class MazeFrame(Frame):
         # Draw the horizontal cell walls
         for x in range(len(self.horizontal)):
             for y in range(len(self.horizontal[x])):
+                if self.horizontal[x][y] == 0:
+                    col = self.color_maze_fill
                 if self.horizontal[x][y] == 1:
                     col = self.color_normal_stroke
                 elif self.horizontal[x][y] == 2:
@@ -107,31 +117,46 @@ class MazeFrame(Frame):
         self.cells[x][y] = 2
         self.draw_update()
 
-    def add_to_maze(self, x, y):
-        self.cells[x][y] = 0
+    def add_to_maze(self, cell):
+        self.cells[cell[0]][cell[1]] = 0
         self.draw_update()
 
-    def get_cell_walls(self, x, y):
-        return [self.vertical[x][y], self.vertical[x+1][y], self.horizontal[x][y], self.horizontal[x][y+1]]
+    def get_cell_walls(self, cell):
+        # True = vertical | False = horizontal
+        # Return the unique cell walls
+        return [(cell[0], cell[1], True), (cell[0]+1, cell[1], True), (cell[0], cell[1], False), (cell[0], cell[1]+1, False)]
+
+    def get_wall_cells(self, wall):
+        # True = vertical | False = horizontal
+        # return the unique cell values
+        if (wall[2]):
+            return [(wall[0], wall[1]), (wall[0]-1, wall[1])]
+        else:
+            return [(wall[0], wall[1]), (wall[0], wall[1]-1)]
+
+    def get_cell_status(self, cell):
+        return self.cells[cell[0]][cell[1]]
 
     # Selects the wall
-    def select_wall(self, x, y, dir):
-        # vertical wall or horizontal wall?
-        # If dir = true then vertical
-        if (dir == 12):
-            self.horizontal[x][y] = 2
-            self.draw_update()
-        elif (dir == 3):
-            self.vertical[x+1][y] = 2
-            self.draw_update()
-        elif (dir == 6):
-            self.horizontal[x][y+1] = 2
-            self.draw_update()
-        elif (dir == 9):
-            self.vertical[x][y] = 2
-            self.draw_update()
+    def select_wall(self, wall):
+        # True = vertical | False = horizontal
+        if (wall[2]):
+            self.vertical[wall[0]][wall[1]] = 2
         else:
-            print("ERROR: Unknown index in select_wall()", dir)
+            self.horizontal[wall[0]][wall[1]] = 2
+
+        self.draw_update()
+
+    def break_wall(self, wall):
+        # True = vertical | False = horizontal
+        if (wall[2]):
+            self.vertical[wall[0]][wall[1]] = 0
+        else:
+            self.horizontal[wall[0]][wall[1]] = 0
+
+        self.draw_update()
+
+
 
 
 
