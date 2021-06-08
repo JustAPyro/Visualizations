@@ -2,10 +2,10 @@ public class ConnectFour
 {
 
     // Width and height of the board (Standard is 6x7)
-    int boardx = 7; int boardy = 6;
+    private int boardx = 7; private int boardy = 6;
 
     // Declaring the variable for the game board
-    int[][] board;
+    private int[][] board;
 
     // Constructor Class
     public ConnectFour() {
@@ -15,12 +15,15 @@ public class ConnectFour
 
     }
 
+
+
     /**
      *
      *  For use printing the gamestate.
      *
      * @return Gamestate representation as a multi-line string
      */
+    @Override
     public String toString() {
 
         // This string will represent the gamestate
