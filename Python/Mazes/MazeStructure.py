@@ -83,10 +83,23 @@ class MazeFrame(Frame):
         self.canvas.pack(fill=BOTH, expand=1)
 
         button = Button(self.canvas, text='Next Step', command=self.next)
-        button.pack(side=TOP)
+        button.pack(side=RIGHT)
 
         finish_button = Button(self.canvas, text="Finish", command=self.call_finish)
-        finish_button.pack(side=TOP)
+        finish_button.pack(side=RIGHT)
+
+        final_button = Button(self.canvas, text="Skip to end", command=self.skip)
+        final_button.pack(side=RIGHT)
+
+    def skip(self):
+        while True:
+            self.step_func(self.step)
+            self.step = self.step + 1
+
+            if not self.get_saved_walls() and self.step != 1:
+                break
+
+        self.draw_update()
 
     def finish(self):
         for i in range(5):

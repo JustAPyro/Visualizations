@@ -44,4 +44,15 @@ public class GUI
 
     }
 
+    public static void connectedHeadlessGame() {
+
+        // Since this is also headless we'll need a scanner for input
+        Scanner in = new Scanner(System.in);
+
+        // First check if the user would like to host or connect
+        System.out.println("Would you like to host a Connect4 Server or connect to one?");
+        System.out.print("Enter 0 for host or 1 for connect: ");
+
+    }
+
 }
