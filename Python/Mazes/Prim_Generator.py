@@ -1,15 +1,15 @@
 # Implementation of Randomized Prim's Algorithm in maze generation, using MazeStructure.
-# Designed and Implemented by Luke Hanna (github.com/JustAPyro)
+# Implemented by Luke Hanna (github.com/JustAPyro)
 # Project started on May 26, 2021
 # Objective: Creating a easily understandable visualization of Prim's Maze generation
 #
-# Details: Implementation is based on wikipedia's pseudo code (https://bit.ly/3pSH9Z6) as follows:
+# Details: Implementation is based on Wikipedia's pseudo code (https://bit.ly/3pSH9Z6) as follows:
 #
 # 1. Start with a grid full of walls
 # 2. Pick a cell, mark it as part of the maze. Add the walls of the cell to the wall list.
 # 3. While there are walls in the list:
 #     1. Pick a random wall from the list. If only one of the two cells that the wall divides is visited, then:
-#         1. Make the wall a passage and mark the unvisted cell as part of the maze.
+#         1. Make the wall a passage and mark the unvisited cell as part of the maze.
 #         2. Add the neighboring walls of the cell to the wall list.
 #     2. Remove the wall from the list
 
@@ -61,7 +61,6 @@ def prim_step(step):
             # Add the walls of the cell to the wall list
             maze.save_wall(wall)
 
-
     # - - - - - - - - - - - - - - - STEP THREE - - - - - - - - - - - - - - -
     # 3. While there are walls in the list
 
@@ -70,7 +69,6 @@ def prim_step(step):
 
         # Do nothing
         return
-
 
     # - - - - - - - - - - - - - - - STEP THREE ONE - - - - - - - - - - - - - - -
     # 3.1 Pick a random wall from the list. If only one of the two cells that the wall divides is visited then:
