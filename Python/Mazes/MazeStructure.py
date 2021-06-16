@@ -11,28 +11,34 @@ class MazeFrame(Frame):
 
 
 
-    h_walls = []
-    v_walls = []
-    cells = []
+    h_walls = []    # Horizontal wall data
+    v_walls = []    # Vertical wall data
+    cells = []      # Cell data
 
+    # Constructor takes window title, the window object, dimensions of grid, size of grid unit, and the function that determines the maze
     def __init__(self, newTitle, window, dimensions, size, step_func):
+
         # Start by calling the parent Frame initialization
         super().__init__()
 
-        self.seed = (0, 0)
-        self.selected_wall = (0, 0, False)
-        self.saved_walls = []
-        self.saved_cell = ()
+        self.seed = (0, 0)                  # The start cell/seed that determines the beginning state
+        self.selected_wall = (0, 0, False)  # The selected wall (Only 1 wall can be selected at a time, 'working' wall
+        self.saved_walls = []               # The saved walls (This is the list of the walls you saved)
+        self.saved_cell = ()                # The saved cell
 
-        self.color_normal_fill = "#A9D"
-        self.color_select_fill = "#3C4"
-        self.color_maze_fill = "#F93"
 
-        self.color_normal_stroke = "#101010"
-        self.color_select_stroke = "#FF0"
-        self.color_saved_stroke = "#F00"
+        self.color_normal_fill = "#A9D"     # The fill color for 'normal' cells
+        self.color_select_fill = "#3C4"     # The fill color for 'selected' cells
+        self.color_maze_fill = "#F93"       # The fill color for 'maze' included cells
 
+        self.color_normal_stroke = "#101010"    # Stroke color for 'normal' walls
+        self.color_select_stroke = "#FF0"       # Stroke color for 'selected' walls
+        self.color_saved_stroke = "#F00"        # Stroke color for 'saved' walls
+
+        # The step of the function we are on
         self.step = 0;
+
+        # The function that determines drawing of the maze
         self.step_func = step_func;
 
         # for dimensions = (2, 2)
