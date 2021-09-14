@@ -114,6 +114,8 @@ public class MazeStructure
                     gc.setStroke(Color.BLACK);
                 else if (vWalls[x][y] == 10)
                     gc.setStroke(Color.ORANGE);
+                else if (vWalls[x][y] == 11)
+                    gc.setStroke(Color.RED);
 
                 gc.strokeLine((x+1)*cellWidth, (y)*cellHeight, (x+1)*cellWidth, (y+1)*cellHeight);
 
@@ -127,6 +129,8 @@ public class MazeStructure
                     gc.setStroke(Color.BLACK);
                 else if (hWalls[x][y] == 10)
                     gc.setStroke(Color.ORANGE);
+                else if (hWalls[x][y] == 11)
+                    gc.setStroke(Color.RED);
 
                 gc.strokeLine((x)*cellWidth, (y+1)*cellHeight, (x+1)*cellWidth, (y+1)*cellHeight);
 
@@ -138,26 +142,65 @@ public class MazeStructure
     }
 
     /**
-     * This function will save the walls surrounding a cell to an internal list
+     * This function will return the walls surrounding cell x, y
      * @param x The x coordinate of cell
      * @param y The y coordinate of cell
      */
-    public void saveSurroundingWalls(int x, int y)
+    public ArrayList<Wall> getSurroundingWalls(int x, int y)
     {
         //TODO: Make sure that this won't IndexOutOfBoundsException
 
-        // For 1, 1
-        hWalls[x][y-1] = 10;
-        hWalls[x][y] = 10;
-        vWalls[x-1][y] = 10;
-        vWalls[x][y] = 10;
+        // Create an arraylist to return
+        ArrayList<Wall> ret = new ArrayList<Wall>();
 
         // Save the new walls to the saved list
-        saved.add(new Wall('h', x, y-1));
-        saved.add(new Wall('h', x, y));
-        saved.add(new Wall('v', x-1, y));
-        saved.add(new Wall('v', x, y));
+        ret.add(new Wall('h', x, y-1));
+        ret.add(new Wall('h', x, y));
+        ret.add(new Wall('v', x-1, y));
+        ret.add(new Wall('v', x, y));
 
+        // Return the array list of walls
+        return ret;
+    }
+
+    /**\
+     * This colors the walls passed in through the list the provided color
+     * @param walls The walls to be colored
+     * @param color The index of the color you would like
+     */
+    public void colorWall(ArrayList<Wall> walls, int color)
+    {
+        for (Wall w : walls)
+        {
+            if (w.o == 'h')
+            {
+                hWalls[w.x][w.y] = color;
+            }
+
+            if (w.o == 'v')
+            {
+                vWalls[w.x][w.y] = color;
+            }
+        }
+
+        // Flag that we need to redraw based on new values
+        redrawFlag = true;
+
+    }
+
+    /**
+     * Colors a single wall passed in
+     * @param w The wall you would like coloreds
+     * @param color The index of desired color
+     */
+    public void colorWall(Wall w, int color)
+    {
+        if (w.o == 'h')
+        {
+            hWalls[w.x][w.y] = color;
+        }
+
+        // Flag that we need to redraw based on new values
         redrawFlag = true;
     }
 

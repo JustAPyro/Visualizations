@@ -1,6 +1,8 @@
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.Random;
 
 /*
@@ -31,6 +33,7 @@ public class PrimGenerator
     private MazeStructure maze;     // The maze structure this generator will work with
     private int currentStep = 0;    // Represents the current step of the algorithm
     private TextManager tm;         // The text manager that will draw text associated with algoirthm
+    ArrayList<Wall> saved;          // List of saved walls
 
     /**
      * Basic constructor for a prim generator
@@ -53,6 +56,9 @@ public class PrimGenerator
         // Since no MazeStructure was offered in this constructor, we create a new one
         maze = new MazeStructure(8, 8, width, height);
 
+        // Initalized the walls array
+        saved = new ArrayList<Wall>();
+
     }
 
     /**
@@ -60,7 +66,7 @@ public class PrimGenerator
      */
     public void nextStep()
     {
-        // If this is the first step of the algorithm
+        // Step = "Pick a cell, mark it as part of the maze and add walls to wall list
         if (currentStep == 0)
         {
             // Create a random generator
@@ -72,10 +78,17 @@ public class PrimGenerator
             // Add the random cell to the maze
             maze.addToMaze(rx, ry);
 
+            // Get the surrounding walls
+            ArrayList<Wall> surround = maze.getSurroundingWalls(rx, ry);
+
+            // Color the provided walls in orange
+            maze.colorWall(surround, 10);
+
+            // Save them to the list
+            saved.addAll(surround);
+
             // Select the next row of text
             tm.selectText(1);
-
-            maze.saveSurroundingWalls(rx, ry);
 
             currentStep++;
 
@@ -83,13 +96,22 @@ public class PrimGenerator
         // Step = "While there are walls in the list"
         else if (currentStep == 1)
         {
-            tm.updateText(2, "3. While there are walls in the list: (Currently " + maze.savedWallSize() +" saved)");
+            tm.updateText(2, "3. While there are walls in the list: (Currently " + saved.size() +" in list)");
             tm.selectText(2);
             currentStep++;
         }
-        // Step
+        // Step = Pick a random wall from the list. If only one of the two cells that the wall divides is visiten, then:
         else if (currentStep == 2)
         {
+
+            // Create a random generator
+            Random rnd = new Random();
+
+            // Pick the index of a random wall
+            int selectedIndex = rnd.nextInt(saved.size());
+
+            maze.colorWall(saved.get(selectedIndex), 11);
+
             tm.selectText(3);
             currentStep++;
         }
