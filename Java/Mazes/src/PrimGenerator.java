@@ -1,3 +1,6 @@
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+
 /*
 Implementation of Randomized Prim's Algorithm in maze generation, using MazeStructure.
 Implemented by Luke Hanna (github.com/JustAPyro)
@@ -20,6 +23,33 @@ https://docs.google.com/document/d/10b-LSSGvkl0g05j54R10NhtFlJdlgE82eGOzjwQn1sg/
 public class PrimGenerator
 {
 
+    private Canvas canvas;          // The canvas the PrimGenerator works on primarily
+    private GraphicsContext gc;     // The graphics context that is mainly used
+    private double width, height;   // Parameters for width/height of the canvas
 
+    /**
+     * Basic constructor for a prim generator
+     * @param canvas Requires the canvas you wish it to be drawn/animated on
+     */
+    public PrimGenerator(Canvas canvas)
+    {
+        // Save the provided parameters
+        this.canvas = canvas;
+
+        // Calculate additional necessary parameters on creation so we don't have to do it later
+        gc = canvas.getGraphicsContext2D();
+        width = canvas.getWidth();
+        height = canvas.getHeight();
+    }
+
+    /**
+     * Draws the current state of working MazeStructure based on the PrimGenerator State
+     */
+    public void draw()
+    {
+
+        gc.strokeRect(0, 0, width, height);
+
+    }
 
 }
