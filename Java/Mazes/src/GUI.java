@@ -1,7 +1,9 @@
+import javafx.animation.AnimationTimer;
 import javafx.application.Application; // Required for JFX application
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -64,6 +66,12 @@ public class GUI extends Application
         Canvas mazeCanvas = new Canvas(500, 500);
         root.getChildren().add(mazeCanvas);
 
+        // Save the maze canvas graphics context
+        GraphicsContext mgc = mazeCanvas.getGraphicsContext2D();
+
+        // Then create a Prim generator and attach it to mazeCanvas
+        PrimGenerator prim = new PrimGenerator(mazeCanvas);
+
         // Create and add text canvas to root
         Canvas textCanvas = new Canvas(500, 200);
         root.getChildren().add(textCanvas);
@@ -95,8 +103,21 @@ public class GUI extends Application
         Button loadMaze = new Button("Load Maze");
         footer.getChildren().add(loadMaze);
 
+        // ---------------- Now that the basic GUI is set up, start the animation loop! -----------
+        AnimationTimer timer = new AnimationTimer()
+        {
+            @Override //overriding the handle function to animation
+            public void handle(long now)
+            {
+                // Clear the canvas at the beginning of every frame
+                mgc.clearRect(0, 0, mazeCanvas.getWidth(), mazeCanvas.getHeight());
+                prim.draw();
+            }
+        };
+        timer.start();
+
         // Create and set a new JFX scene
-        primaryStage.setScene(new Scene(root, 600, 800));
+        primaryStage.setScene(new Scene(root, 700, 850));
 
         // Set stage to show
         primaryStage.show();
