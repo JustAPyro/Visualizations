@@ -62,9 +62,12 @@ public class GUI extends Application
         Button finishButton = new Button("Finish Maze");
         header.getChildren().add(finishButton);
 
-        // Create and add canvas to root
+        // Create and add canvas to an HBOX then root
         Canvas mazeCanvas = new Canvas(500, 500);
-        root.getChildren().add(mazeCanvas);
+        HBox canvasHolder = new HBox();
+        canvasHolder.getChildren().add(mazeCanvas);
+        canvasHolder.setPadding(new Insets(10, 10, 10, 10));
+        root.getChildren().add(canvasHolder);
 
         // Save the maze canvas graphics context
         GraphicsContext mgc = mazeCanvas.getGraphicsContext2D();

@@ -26,6 +26,7 @@ public class PrimGenerator
     private Canvas canvas;          // The canvas the PrimGenerator works on primarily
     private GraphicsContext gc;     // The graphics context that is mainly used
     private double width, height;   // Parameters for width/height of the canvas
+    private MazeStructure maze;     // The maze structure this generator will work with
 
     /**
      * Basic constructor for a prim generator
@@ -42,7 +43,7 @@ public class PrimGenerator
         height = canvas.getHeight();
 
         // Since no MazeStructure was offered in this constructor, we create a new one
-        MazeStructure maze = new MazeStructure(8, 8, width, height);
+        maze = new MazeStructure(8, 8, width, height);
     }
 
     /**
@@ -51,7 +52,7 @@ public class PrimGenerator
     public void draw()
     {
 
-        gc.strokeRect(0, 0, width, height);
+        maze.draw(gc);
 
     }
 
