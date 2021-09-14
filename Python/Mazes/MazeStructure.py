@@ -91,22 +91,24 @@ class MazeFrame(Frame):
         button = Button(self.canvas, text='Next Step', command=self.next)
         button.pack(side=RIGHT)
 
-        finish_button = Button(self.canvas, text="Finish", command=self.call_finish)
-        finish_button.pack(side=RIGHT)
+        # THIS PART WAS BROKEN AND NEEDS FIXING
+        # finish_button = Button(self.canvas, text="Finish", command=self.call_finish)
+        # finish_button.pack(side=RIGHT)
 
         final_button = Button(self.canvas, text="Skip to end", command=self.skip)
         final_button.pack(side=RIGHT)
 
-        rules = '''1. Start with a grid full of walls.
-        2. Pick a cell, mark it as part of the maze. Add the walls of the cell to the wall list.
-        3. While there are walls in the list:
-            1. Pick a random wall from the list. If only one of the two cells that the wall divides is visited, then:
-                1. Make the wall a passage and mark the unvisisted cell as part of the maze.
-                2. Add the neighboring walls of the cell to the wall list.
-            2. Remove the wall from the list.'''
+        # These were also broken and needs fixing
+        # rules = '''1. Start with a grid full of walls.
+        # 2. Pick a cell, mark it as part of the maze. Add the walls of the cell to the wall list.
+        # 3. While there are walls in the list:
+        #     1. Pick a random wall from the list. If only one of the two cells that the wall divides is visited, then:
+        #         1. Make the wall a passage and mark the unvisisted cell as part of the maze.
+        #         2. Add the neighboring walls of the cell to the wall list.
+        #     2. Remove the wall from the list.'''
 
-        description = Text(self.canvas, wrap=WORD)
-        description.insert(INSERT, rules)
+        # description = Text(self.canvas, wrap=WORD)
+        # description.insert(INSERT, rules)
 
         description.config(state=DISABLED)
         description.pack(side=RIGHT)
