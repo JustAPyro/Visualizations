@@ -40,6 +40,9 @@ public class PrimGenerator
         gc = canvas.getGraphicsContext2D();
         width = canvas.getWidth();
         height = canvas.getHeight();
+
+        // Since no MazeStructure was offered in this constructor, we create a new one
+        MazeStructure maze = new MazeStructure(8, 8, width, height);
     }
 
     /**
