@@ -1,6 +1,7 @@
 import javafx.application.Application; // Required for JFX application
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -47,9 +48,9 @@ public class GUI extends Application
         header.getChildren().add(titleLabel);
 
         // Add in the spacer between title and buttons
-        Region spacer = new Region();
-        header.getChildren().add(spacer);
-        HBox.setHgrow(spacer, Priority.ALWAYS);
+        Region spacerHead = new Region();
+        header.getChildren().add(spacerHead);
+        HBox.setHgrow(spacerHead, Priority.ALWAYS);
 
         // Create and add step button
         Button stepButton = new Button("Next Step");
@@ -58,6 +59,41 @@ public class GUI extends Application
         // Create and add finish button
         Button finishButton = new Button("Finish Maze");
         header.getChildren().add(finishButton);
+
+        // Create and add canvas to root
+        Canvas mazeCanvas = new Canvas(500, 500);
+        root.getChildren().add(mazeCanvas);
+
+        // Create and add text canvas to root
+        Canvas textCanvas = new Canvas(500, 200);
+        root.getChildren().add(textCanvas);
+
+        // Create footer containing (myInfo      Save Maze, Load Maze)
+        HBox footer = new HBox();
+
+        // Set padding and spacing on footer
+        footer.setPadding(new Insets(10, 10, 10, 10));
+        footer.setSpacing(10);
+
+        // Add footer to root
+        root.getChildren().add(footer);
+
+        // Create and add Info label
+        Label infoLabel = new Label("Implementation by \n Luke Hanna  \n Github.com/JustAPyro");
+        footer.getChildren().add(infoLabel);
+
+        // Create and add spacer
+        Region spacerFoot = new Region();
+        footer.getChildren().add(spacerFoot);
+        HBox.setHgrow(spacerFoot, Priority.ALWAYS);
+
+        // Create and add save maze button
+        Button saveMaze = new Button("Save Maze");
+        footer.getChildren().add(saveMaze);
+
+        // Create and add load maze
+        Button loadMaze = new Button("Load Maze");
+        footer.getChildren().add(loadMaze);
 
         // Create and set a new JFX scene
         primaryStage.setScene(new Scene(root, 600, 800));
