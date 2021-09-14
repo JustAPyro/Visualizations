@@ -27,6 +27,7 @@ public class PrimGenerator
     private GraphicsContext gc;     // The graphics context that is mainly used
     private double width, height;   // Parameters for width/height of the canvas
     private MazeStructure maze;     // The maze structure this generator will work with
+    private int currentStep = 0;        // Represents the current step of the algorithm
 
     /**
      * Basic constructor for a prim generator
@@ -47,12 +48,25 @@ public class PrimGenerator
     }
 
     /**
+     * Takes a step and then redraws the maze
+     */
+    public void nextStep()
+    {
+        // If this is the first step of the algorithm
+        if (currentStep == 0)
+        {
+            // Then we pick a random cell, mark it as part of the maze, and adds walls to the list
+            
+        }
+    }
+
+    /**
      * Draws the current state of working MazeStructure based on the PrimGenerator State
      */
     public void draw()
     {
 
-        maze.draw(gc);
+        maze.draw(gc); // Draw the maze as desired
 
     }
 

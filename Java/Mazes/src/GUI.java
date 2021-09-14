@@ -1,5 +1,7 @@
 import javafx.animation.AnimationTimer;
 import javafx.application.Application; // Required for JFX application
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -56,11 +58,23 @@ public class GUI extends Application
 
         // Create and add step button
         Button stepButton = new Button("Next Step");
+        stepButton.setOnAction(new EventHandler<ActionEvent>()
+        {
+            @Override
+            public void handle(ActionEvent event)
+            {
+                System.out.println("Next step!");
+            }
+        });
         header.getChildren().add(stepButton);
 
         // Create and add finish button
         Button finishButton = new Button("Finish Maze");
         header.getChildren().add(finishButton);
+
+        // Create and add skip to end button
+        Button skipButton = new Button("Skip to End");
+        header.getChildren().add(skipButton);
 
         // Create and add canvas to an HBOX then root
         Canvas mazeCanvas = new Canvas(500, 500);
@@ -83,13 +97,12 @@ public class GUI extends Application
         // Create a text manager and attach it to textCanvas
         TextManager tm = new TextManager(textCanvas);
         tm.addText(1, 0, "1. Start with a grid full of walls");
-        tm.addText(2, 0, "2. Pick a cell, mark it as part of the maze. Add the walls of the cell to the wall list.");
-        tm.addText(3, 0, "3. While there are walls in the list:");
-        tm.addText(4, 1, "1. Pick a random wall from the list. If only one of the two cells that the wall divides is visited, then:");
-        tm.addText(5, 2, "1. Make the wall a passage and mark the unvisited cell as part of the maze");
-        tm.addText(6, 2, "2. Add the neighboring walls of the cell to the wall list.");
-        tm.addText(7, 1, "2. Remove the wall from the list");
-
+        tm.addText(0, 0, "2. Pick a cell, mark it as part of the maze. Add the walls of the cell to the wall list.");
+        tm.addText(0, 0, "3. While there are walls in the list:");
+        tm.addText(0, 1, "1. Pick a random wall from the list. If only one of the two cells that the wall divides is visited, then:");
+        tm.addText(0, 2, "1. Make the wall a passage and mark the unvisited cell as part of the maze");
+        tm.addText(0, 2, "2. Add the neighboring walls of the cell to the wall list.");
+        tm.addText(0, 1, "2. Remove the wall from the list");
 
 
         // Create footer containing (myInfo      Save Maze, Load Maze)
