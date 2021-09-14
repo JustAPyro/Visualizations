@@ -23,6 +23,9 @@ import javafx.stage.Stage;
 public class GUI extends Application
 {
 
+    private PrimGenerator prim; // This is what is going to be handling the algorithm
+    private TextManager tm;     // This is what will be handling updating the text
+
     /**
      * This is enteredwhen the application is launched
      * @param primaryStage The main window of the application
@@ -64,6 +67,7 @@ public class GUI extends Application
             public void handle(ActionEvent event)
             {
                 System.out.println("Next step!");
+                prim.nextStep();
             }
         });
         header.getChildren().add(stepButton);
@@ -86,16 +90,13 @@ public class GUI extends Application
         // Save the maze canvas graphics context
         GraphicsContext mgc = mazeCanvas.getGraphicsContext2D();
 
-        // Then create a Prim generator and attach it to mazeCanvas
-        PrimGenerator prim = new PrimGenerator(mazeCanvas);
-
         // Create and add text canvas to root
         Canvas textCanvas = new Canvas(600, 200);
         GraphicsContext tgc = textCanvas.getGraphicsContext2D();
         root.getChildren().add(textCanvas);
 
         // Create a text manager and attach it to textCanvas
-        TextManager tm = new TextManager(textCanvas);
+        tm = new TextManager(textCanvas);
         tm.addText(1, 0, "1. Start with a grid full of walls");
         tm.addText(0, 0, "2. Pick a cell, mark it as part of the maze. Add the walls of the cell to the wall list.");
         tm.addText(0, 0, "3. While there are walls in the list:");
@@ -104,6 +105,8 @@ public class GUI extends Application
         tm.addText(0, 2, "2. Add the neighboring walls of the cell to the wall list.");
         tm.addText(0, 1, "2. Remove the wall from the list");
 
+        // Then create a Prim generator and attach it to mazeCanvas
+        prim = new PrimGenerator(mazeCanvas, tm);
 
         // Create footer containing (myInfo      Save Maze, Load Maze)
         HBox footer = new HBox();
@@ -139,7 +142,6 @@ public class GUI extends Application
             public void handle(long now)
             {
                 // Clear both canvases at the beginning of every frame
-                mgc.clearRect(0, 0, mazeCanvas.getWidth(), mazeCanvas.getHeight());
                 tgc.clearRect(0, 0, textCanvas.getWidth(), textCanvas.getHeight());
                 tm.draw();
                 prim.draw();

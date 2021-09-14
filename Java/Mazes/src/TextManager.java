@@ -34,6 +34,16 @@ public class TextManager
         height = canvas.getHeight();
     }
 
+    public void selectText(int index)
+    {
+
+        for (int i = 0; i < this.index.size(); i++)
+        {
+            this.index.set(i, 0);
+        }
+        this.index.set(index, 1);
+    }
+
     /**
      * Method that can be used to add lines of text to the manager
      * @param index The index that you can use to select or modify the text

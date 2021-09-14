@@ -1,6 +1,8 @@
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
+import java.util.Random;
+
 /*
 Implementation of Randomized Prim's Algorithm in maze generation, using MazeStructure.
 Implemented by Luke Hanna (github.com/JustAPyro)
@@ -27,16 +29,21 @@ public class PrimGenerator
     private GraphicsContext gc;     // The graphics context that is mainly used
     private double width, height;   // Parameters for width/height of the canvas
     private MazeStructure maze;     // The maze structure this generator will work with
-    private int currentStep = 0;        // Represents the current step of the algorithm
+    private int currentStep = 0;    // Represents the current step of the algorithm
+    private TextManager tm;         // The text manager that will draw text associated with algoirthm
 
     /**
      * Basic constructor for a prim generator
      * @param canvas Requires the canvas you wish it to be drawn/animated on
+     * @param tm The text manager you would like updated with canvas
      */
-    public PrimGenerator(Canvas canvas)
+    public PrimGenerator(Canvas canvas, TextManager tm)
     {
         // Save the provided parameters
         this.canvas = canvas;
+        this.tm = tm;
+        System.out.println("Saving tm!");
+        System.out.println(this.tm);
 
         // Calculate additional necessary parameters on creation so we don't have to do it later
         gc = canvas.getGraphicsContext2D();
@@ -45,6 +52,7 @@ public class PrimGenerator
 
         // Since no MazeStructure was offered in this constructor, we create a new one
         maze = new MazeStructure(8, 8, width, height);
+
     }
 
     /**
@@ -55,8 +63,22 @@ public class PrimGenerator
         // If this is the first step of the algorithm
         if (currentStep == 0)
         {
+            // Create a random generator
+            Random rnd = new Random();
+
             // Then we pick a random cell, mark it as part of the maze, and adds walls to the list
-            
+            int rx = rnd.nextInt(8); int ry = rnd.nextInt(8);
+
+            // Add the random cell to the maze
+            maze.addToMaze(rx, ry);
+
+            // Select the next row of text
+            tm.selectText(1);
+
+            maze.saveSurroundingWalls(rx, ry);
+
+            currentStep++;
+
         }
     }
 
