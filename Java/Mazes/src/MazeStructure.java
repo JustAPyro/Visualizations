@@ -177,6 +177,16 @@ public class MazeStructure
         redrawFlag = true;
     }
 
+    /**
+     * This method simply returns the number of walls currently saved
+     * @return Number of saved walls
+     */
+    public int savedWallSize()
+    {
+        // Return the number of saved walls
+        return saved.size();
+    }
+
     // Add to maze given indexes and then redraw
     public void addToMaze(int x, int y)
     {

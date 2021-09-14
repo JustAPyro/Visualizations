@@ -80,6 +80,34 @@ public class PrimGenerator
             currentStep++;
 
         }
+        // Step = "While there are walls in the list"
+        else if (currentStep == 1)
+        {
+            tm.updateText(2, "3. While there are walls in the list: (Currently " + maze.savedWallSize() +" saved)");
+            tm.selectText(2);
+            currentStep++;
+        }
+        // Step
+        else if (currentStep == 2)
+        {
+            tm.selectText(3);
+            currentStep++;
+        }
+        else if (currentStep == 3)
+        {
+            tm.selectText(4);
+            currentStep++;
+        }
+        else if (currentStep == 4)
+        {
+            tm.selectText(5);
+            currentStep++;
+        }
+        else if (currentStep == 5)
+        {
+            tm.selectText(6);
+            currentStep = 1;
+        }
     }
 
     /**

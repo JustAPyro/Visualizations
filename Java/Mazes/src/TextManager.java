@@ -58,6 +58,17 @@ public class TextManager
     }
 
     /**
+     * Updates a previously provided string
+     * @param index The index of the string you want modified
+     * @param str The new string provided
+     */
+    public void updateText(int index, String str)
+    {
+        // Set the index to string
+        lines.set(index, str);
+    }
+
+    /**
      * Method that will draw and manage the graphics of the text
      */
     public void draw()
