@@ -90,6 +90,16 @@ public class MazeStructure
             }
         }
 
+        gc.setFill(Color.LIGHTGRAY);
+        // then draw the CELLS
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+
+                gc.fillRect(cellWidth*x+1, cellHeight*y+1, cellWidth-2, cellHeight-2);
+
+            }
+        }
+
 
 
     }

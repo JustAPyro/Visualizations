@@ -76,8 +76,21 @@ public class GUI extends Application
         PrimGenerator prim = new PrimGenerator(mazeCanvas);
 
         // Create and add text canvas to root
-        Canvas textCanvas = new Canvas(500, 200);
+        Canvas textCanvas = new Canvas(600, 200);
+        GraphicsContext tgc = textCanvas.getGraphicsContext2D();
         root.getChildren().add(textCanvas);
+
+        // Create a text manager and attach it to textCanvas
+        TextManager tm = new TextManager(textCanvas);
+        tm.addText(1, 0, "1. Start with a grid full of walls");
+        tm.addText(2, 0, "2. Pick a cell, mark it as part of the maze. Add the walls of the cell to the wall list.");
+        tm.addText(3, 0, "3. While there are walls in the list:");
+        tm.addText(4, 1, "1. Pick a random wall from the list. If only one of the two cells that the wall divides is visited, then:");
+        tm.addText(5, 2, "1. Make the wall a passage and mark the unvisited cell as part of the maze");
+        tm.addText(6, 2, "2. Add the neighboring walls of the cell to the wall list.");
+        tm.addText(7, 1, "2. Remove the wall from the list");
+
+
 
         // Create footer containing (myInfo      Save Maze, Load Maze)
         HBox footer = new HBox();
@@ -112,8 +125,10 @@ public class GUI extends Application
             @Override //overriding the handle function to animation
             public void handle(long now)
             {
-                // Clear the canvas at the beginning of every frame
+                // Clear both canvases at the beginning of every frame
                 mgc.clearRect(0, 0, mazeCanvas.getWidth(), mazeCanvas.getHeight());
+                tgc.clearRect(0, 0, textCanvas.getWidth(), textCanvas.getHeight());
+                tm.draw();
                 prim.draw();
             }
         };
