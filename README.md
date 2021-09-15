@@ -4,3 +4,8 @@ Graphical visualizations of different algorithms in various languages, with the 
 In-Progress:
   <br>-> Prim's Maze Generation (Java)
   <br>-> Prim's Maze Generation (Python)
+
+To-do/Planning:
+  <br>-> Mini-max AI Algorithm
+  <br>-> Maze Solving with Depth First AI
+  <br>-> Maze Solving with Breadth First AI
