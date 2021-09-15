@@ -14,6 +14,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import static java.lang.Thread.sleep;
+
 /**
  * This class is in charge of drawing the wireframe and GUI in the associated report
  * (https://docs.google.com/document/d/10b-LSSGvkl0g05j54R10NhtFlJdlgE82eGOzjwQn1sg/edit?usp=sharing)
@@ -74,10 +76,26 @@ public class GUI extends Application
 
         // Create and add finish button
         Button finishButton = new Button("Finish Maze");
+        finishButton.setOnAction(new EventHandler<ActionEvent>()
+        {
+            @Override
+            public void handle(ActionEvent event)
+            {
+                while (prim.nextStep() == false);
+            }
+        });
         header.getChildren().add(finishButton);
 
         // Create and add skip to end button
         Button skipButton = new Button("Skip to End");
+        skipButton.setOnAction(new EventHandler<ActionEvent>()
+        {
+            @Override
+            public void handle(ActionEvent event)
+            {
+                while (prim.nextStep() == false);
+            }
+        });
         header.getChildren().add(skipButton);
 
         // Create and add canvas to an HBOX then root

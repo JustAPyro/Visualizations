@@ -5,6 +5,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static java.lang.Thread.sleep;
+
 /*
 Implementation of Randomized Prim's Algorithm in maze generation, using MazeStructure.
 Implemented by Luke Hanna (github.com/JustAPyro)
@@ -34,6 +36,8 @@ public class PrimGenerator
     private int currentStep = 0;    // Represents the current step of the algorithm
     private TextManager tm;         // The text manager that will draw text associated with algoirthm
     ArrayList<Wall> saved;          // List of saved walls
+    int selectedIndex = 0;          // Working index to track
+    Wall workingWall;
 
     /**
      * Basic constructor for a prim generator
@@ -61,11 +65,16 @@ public class PrimGenerator
 
     }
 
+
+
     /**
      * Takes a step and then redraws the maze
      */
-    public void nextStep()
+    public boolean nextStep()
     {
+        boolean subloop = false;
+
+
         // Step = "Pick a cell, mark it as part of the maze and add walls to wall list
         if (currentStep == 0)
         {
@@ -104,13 +113,40 @@ public class PrimGenerator
         else if (currentStep == 2)
         {
 
+            for (Wall w : saved)
+            {
+                System.out.println(w.o + " - " + w.x + ", " + w.y);
+            }
+
             // Create a random generator
             Random rnd = new Random();
 
             // Pick the index of a random wall
-            int selectedIndex = rnd.nextInt(saved.size());
+            selectedIndex = rnd.nextInt(saved.size());
 
+            // Color the wall to indicate it's been picked
             maze.colorWall(saved.get(selectedIndex), 11);
+            System.out.println(saved.get(selectedIndex).o + " wall at (" + saved.get(selectedIndex).x + ", " + saved.get(selectedIndex).y);
+
+            // Get the value of the two cells
+            Wall[] cells = maze.getCells(saved.get(selectedIndex));
+            System.out.println(cells);
+
+
+
+            // If ONLY (XOR) one of the cells has been visited, then:
+            if (maze.getValue(cells[0]) == 1 ^ maze.getValue(cells[1]) == 1)
+            {
+                System.out.println(cells[0] + ", " + cells[1]);
+                subloop = true;
+                tm.updateText(3, "1. Pick a random wall from the list. If only one of the two cells that the wall divides is visited, then: (True)");
+
+            }
+            else
+            {
+                currentStep += 2;
+                tm.updateText(3, "1. Pick a random wall from the list. If only one of the two cells that the wall divides is visited, then: (False)");
+            }
 
             tm.selectText(3);
             currentStep++;
@@ -118,18 +154,59 @@ public class PrimGenerator
         else if (currentStep == 3)
         {
             tm.selectText(4);
+
+            Wall[] cells = maze.getCells(saved.get(selectedIndex));
+            if (maze.getValue(cells[0]) == 1 ^ maze.getValue(cells[1]) == 1)
+            {
+                if (maze.getValue(cells[0]) == 1)
+                {
+                    maze.addToMaze(cells[1].x, cells[1].y);
+                    workingWall = cells[1];
+                }
+                else
+                {
+                    maze.addToMaze(cells[0].x, cells[0].y);
+                    workingWall = cells[0];
+                }
+
+
+                maze.breakWall(saved.get(selectedIndex));
+            }
+
             currentStep++;
         }
         else if (currentStep == 4)
         {
+            ArrayList<Wall> surround = maze.getSurroundingWalls(workingWall.x, workingWall.y);
+            for (int i = 0; i < surround.size(); i++)
+            {
+                if (maze.getValue(surround.get(i)) == -1)
+                {
+                    surround.remove(i);
+                }
+            }
+
+            System.out.println("Size of surround is: " + surround.size());
+
+            // Color the provided walls in orange
+            maze.colorWall(surround, 10);
+            saved.addAll(surround);
+
             tm.selectText(5);
             currentStep++;
         }
         else if (currentStep == 5)
         {
+            if (maze.getValue(saved.get(selectedIndex)) == 11)
+                maze.colorWall(saved.get(selectedIndex), 10);
+            saved.remove(selectedIndex);
             tm.selectText(6);
             currentStep = 1;
         }
+        if (saved.size() == 0 && currentStep < 2)
+            return true;
+        else
+            return false;
     }
 
     /**

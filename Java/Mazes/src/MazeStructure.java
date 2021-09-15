@@ -64,7 +64,6 @@ public class MazeStructure
         cellWidth = mazeWidth/width;
         cellHeight = mazeHeight/height;
 
-        hWalls[1][1]=-1;
     }
 
     /**
@@ -98,7 +97,7 @@ public class MazeStructure
             for (int x = 0; x < width; x++) {
 
                 if (cells[x][y] == 0)
-                    gc.setFill(Color.DARKGRAY);
+                    gc.setFill(Color.LIGHTGRAY);
                 else if (cells[x][y] == 1)
                     gc.setFill(Color.WHITE);
 
@@ -111,11 +110,15 @@ public class MazeStructure
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width - 1; x++) {
                 if (vWalls[x][y] == 0)
-                    gc.setStroke(Color.BLACK);
+                    gc.setStroke(Color.DARKGREY);
                 else if (vWalls[x][y] == 10)
                     gc.setStroke(Color.ORANGE);
                 else if (vWalls[x][y] == 11)
                     gc.setStroke(Color.RED);
+                else if (vWalls[x][y] == 13)
+                    gc.setStroke(Color.BLACK);
+                else if (vWalls[x][y] == -1)
+                    continue;
 
                 gc.strokeLine((x+1)*cellWidth, (y)*cellHeight, (x+1)*cellWidth, (y+1)*cellHeight);
 
@@ -126,11 +129,15 @@ public class MazeStructure
         for (int y = 0; y < height - 1; y++) {
             for (int x = 0; x < width; x++) {
                 if (hWalls[x][y] == 0)
-                    gc.setStroke(Color.BLACK);
+                    gc.setStroke(Color.DARKGREY);
                 else if (hWalls[x][y] == 10)
                     gc.setStroke(Color.ORANGE);
                 else if (hWalls[x][y] == 11)
                     gc.setStroke(Color.RED);
+                else if (hWalls[x][y] == 13)
+                    gc.setStroke(Color.BLACK);
+                else if (hWalls[x][y] == -1)
+                    continue;
 
                 gc.strokeLine((x)*cellWidth, (y+1)*cellHeight, (x+1)*cellWidth, (y+1)*cellHeight);
 
@@ -154,12 +161,83 @@ public class MazeStructure
         ArrayList<Wall> ret = new ArrayList<Wall>();
 
         // Save the new walls to the saved list
-        ret.add(new Wall('h', x, y-1));
-        ret.add(new Wall('h', x, y));
-        ret.add(new Wall('v', x-1, y));
-        ret.add(new Wall('v', x, y));
+        // NOTE: We check to ensure no IndexOutOfBoundsException occurs
+        if (x > 0)
+            ret.add(new Wall('v', x-1, y));
+        if (x < width-1)
+            ret.add(new Wall('v', x, y));
+        if (y > 0)
+            ret.add(new Wall('h', x, y-1));
+        if (y < height-1)
+            ret.add(new Wall('h', x, y));
 
         // Return the array list of walls
+        return ret;
+    }
+
+    /**
+     * This will break through a wall in the maze
+     * @param w the wall to be broken
+     */
+    public void breakWall(Wall w)
+    {
+        if (w.o == 'h')
+        {
+            hWalls[w.x][w.y] = -1;
+        }
+        else if (w.o == 'v')
+        {
+            vWalls[w.x][w.y] = -1;
+        }
+
+        // Mark the maze for redrawing
+        redrawFlag = true;
+    }
+
+    // Returns the value of a provided unit
+    public int getValue(Wall w)
+    {
+        if (w.o == 'v')
+        {
+            return vWalls[w.x][w.y];
+        }
+        else if (w.o == 'h')
+        {
+            return hWalls[w.x][w.y];
+        }
+        else
+        {
+            return cells[w.x][w.y];
+        }
+    }
+
+    /**
+     * This returns the value of two cells on either side of a given wall
+     * @param w The functioning wall
+     * @return An array of the 2 cell integers on either side of w
+     */
+    public Wall[] getCells(Wall w)
+    {
+        // Create a return array
+        Wall[] ret = new Wall[2];
+
+
+
+        // If it's a horizontal wall we return top and bottom cells
+        if (w.o == 'h')
+        {
+            ret[0] = new Wall('c', w.x, w.y);
+            ret[1] = new Wall('c', w.x, w.y+1);
+        }
+
+        // If it's a veritcal wall we return left and right cells
+        if (w.o == 'v')
+        {
+            ret[0] = new Wall('c', w.x, w.y);
+            ret[1] = new Wall('c', w.x+1, w.y);
+        }
+
+        // return the values
         return ret;
     }
 
@@ -170,6 +248,7 @@ public class MazeStructure
      */
     public void colorWall(ArrayList<Wall> walls, int color)
     {
+        System.out.println(walls.size());
         for (Wall w : walls)
         {
             if (w.o == 'h')
@@ -195,10 +274,17 @@ public class MazeStructure
      */
     public void colorWall(Wall w, int color)
     {
+        // If it's horizontal change the tag on horizontal walls
         if (w.o == 'h')
         {
             hWalls[w.x][w.y] = color;
         }
+        // Otherwise change the coloration on vWalls
+        else if (w.o == 'v')
+        {
+            vWalls[w.x][w.y] = color;
+        }
+
 
         // Flag that we need to redraw based on new values
         redrawFlag = true;
