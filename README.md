@@ -3,4 +3,4 @@ Graphical visualizations of different algorithms in various languages, with the 
 
 In-Progress:
   <br>-> Prim's Maze Generation (Java)
-  -> Prim's Maze Generation (Python)
+  <br>-> Prim's Maze Generation (Python)
