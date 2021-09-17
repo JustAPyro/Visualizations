@@ -1,14 +1,15 @@
+import com.pyredevelopment.maze.MazeStructure;
+import com.pyredevelopment.maze.Wall;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
 import static java.lang.Thread.sleep;
 
 /*
-Implementation of Randomized Prim's Algorithm in maze generation, using MazeStructure.
+Implementation of Randomized Prim's Algorithm in maze generation, using com.pyredevelopment.maze.MazeStructure.
 Implemented by Luke Hanna (github.com/JustAPyro)
 Project started on Sept 13, 2021
 Objective: Creating a easily understandable visualization of Prim's Maze generation
@@ -57,7 +58,7 @@ public class PrimGenerator
         width = canvas.getWidth();
         height = canvas.getHeight();
 
-        // Since no MazeStructure was offered in this constructor, we create a new one
+        // Since no com.pyredevelopment.maze.MazeStructure was offered in this constructor, we create a new one
         maze = new MazeStructure(8, 8, width, height);
 
         // Initalized the walls array
@@ -210,7 +211,7 @@ public class PrimGenerator
     }
 
     /**
-     * Draws the current state of working MazeStructure based on the PrimGenerator State
+     * Draws the current state of working com.pyredevelopment.maze.MazeStructure based on the PrimGenerator State
      */
     public void draw()
     {
