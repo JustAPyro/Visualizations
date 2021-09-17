@@ -1,3 +1,6 @@
+package com.pyredevelopment.graphical;
+
+import com.pyredevelopment.generationalgorithms.PrimGenerator;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application; // Required for JFX application
 import javafx.event.ActionEvent;
@@ -17,7 +20,7 @@ import javafx.stage.Stage;
 import static java.lang.Thread.sleep;
 
 /**
- * This class is in charge of drawing the wireframe and GUI in the associated report
+ * This class is in charge of drawing the wireframe and com.pyredevelopment.graphical.GUI in the associated report
  * (https://docs.google.com/document/d/10b-LSSGvkl0g05j54R10NhtFlJdlgE82eGOzjwQn1sg/edit?usp=sharing)
  * To display and navigate the maze generation
  * This is done using JavaFX and Canvas
@@ -153,7 +156,7 @@ public class GUI extends Application
         Button loadMaze = new Button("Load Maze");
         footer.getChildren().add(loadMaze);
 
-        // ---------------- Now that the basic GUI is set up, start the animation loop! -----------
+        // ---------------- Now that the basic com.pyredevelopment.graphical.GUI is set up, start the animation loop! -----------
         AnimationTimer timer = new AnimationTimer()
         {
             @Override //overriding the handle function to animation

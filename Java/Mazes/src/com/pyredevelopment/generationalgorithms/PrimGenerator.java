@@ -1,3 +1,6 @@
+package com.pyredevelopment.generationalgorithms;
+
+import com.pyredevelopment.graphical.TextManager;
 import com.pyredevelopment.maze.MazeStructure;
 import com.pyredevelopment.maze.Wall;
 import javafx.scene.canvas.Canvas;
@@ -30,7 +33,7 @@ https://docs.google.com/document/d/10b-LSSGvkl0g05j54R10NhtFlJdlgE82eGOzjwQn1sg/
 public class PrimGenerator
 {
 
-    private Canvas canvas;          // The canvas the PrimGenerator works on primarily
+    private Canvas canvas;          // The canvas the com.pyredevelopment.generationalgorithms.PrimGenerator works on primarily
     private GraphicsContext gc;     // The graphics context that is mainly used
     private double width, height;   // Parameters for width/height of the canvas
     private MazeStructure maze;     // The maze structure this generator will work with
@@ -116,7 +119,7 @@ public class PrimGenerator
 
             for (Wall w : saved)
             {
-                System.out.println(w.o + " - " + w.x + ", " + w.y);
+                System.out.println(w.getO() + " - " + w.getX() + ", " + w.getY());
             }
 
             // Create a random generator
@@ -127,7 +130,7 @@ public class PrimGenerator
 
             // Color the wall to indicate it's been picked
             maze.colorWall(saved.get(selectedIndex), 11);
-            System.out.println(saved.get(selectedIndex).o + " wall at (" + saved.get(selectedIndex).x + ", " + saved.get(selectedIndex).y);
+            System.out.println(saved.get(selectedIndex).getO() + " wall at (" + saved.get(selectedIndex).getX() + ", " + saved.get(selectedIndex).getY());
 
             // Get the value of the two cells
             Wall[] cells = maze.getCells(saved.get(selectedIndex));
@@ -161,12 +164,12 @@ public class PrimGenerator
             {
                 if (maze.getValue(cells[0]) == 1)
                 {
-                    maze.addToMaze(cells[1].x, cells[1].y);
+                    maze.addToMaze(cells[1].getX(), cells[1].getY());
                     workingWall = cells[1];
                 }
                 else
                 {
-                    maze.addToMaze(cells[0].x, cells[0].y);
+                    maze.addToMaze(cells[0].getX(), cells[0].getY());
                     workingWall = cells[0];
                 }
 
@@ -178,7 +181,7 @@ public class PrimGenerator
         }
         else if (currentStep == 4)
         {
-            ArrayList<Wall> surround = maze.getSurroundingWalls(workingWall.x, workingWall.y);
+            ArrayList<Wall> surround = maze.getSurroundingWalls(workingWall.getX(), workingWall.getY());
             for (int i = 0; i < surround.size(); i++)
             {
                 if (maze.getValue(surround.get(i)) == -1)
@@ -211,7 +214,7 @@ public class PrimGenerator
     }
 
     /**
-     * Draws the current state of working com.pyredevelopment.maze.MazeStructure based on the PrimGenerator State
+     * Draws the current state of working com.pyredevelopment.maze.MazeStructure based on the com.pyredevelopment.generationalgorithms.PrimGenerator State
      */
     public void draw()
     {

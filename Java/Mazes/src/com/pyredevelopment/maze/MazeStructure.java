@@ -27,7 +27,7 @@ public class MazeStructure
     // pixel width of cells
     double cellWidth, cellHeight;
 
-    // RedrawFlag indicates if the GUI needs to be refereshed
+    // RedrawFlag indicates if the com.pyredevelopment.graphical.GUI needs to be refereshed
     boolean redrawFlag = true;
 
     int[][] hWalls;     // Represents horizontal maze walls
