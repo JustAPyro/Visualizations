@@ -1,9 +1,12 @@
 package com.pyredevelopment.maze;
 
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+
+import static java.lang.Math.min;
 
 /**
  * Designed and implemented by Luke Hanna (Github.com/JustAPyro) on 9/14/2021
@@ -15,20 +18,22 @@ public class MazeStructure
 {
 
     // Set default origin point to 0, 0
-    int originX = 0;
-    int originY = 0;
+    double originX = 0;
+    double originY = 0;
 
     // The total pixel width and height of the maze
     double mazeWidth, mazeHeight;
 
     // The total set of cells
-    int width, height;
+    double width, height;
 
     // pixel width of cells
     double cellWidth, cellHeight;
 
     // RedrawFlag indicates if the com.pyredevelopment.graphical.GUI needs to be refereshed
     boolean redrawFlag = true;
+
+    private Canvas canvas;
 
     int[][] hWalls;     // Represents horizontal maze walls
     int[][] vWalls;     // Represents vertical maze walls
@@ -43,11 +48,14 @@ public class MazeStructure
      * This create a basic maze structure object to work with
      * @param x The number of units(squares) horizontally in maze
      * @param y The number of units(Squares) vertically in maze
-     * @param mazeWidth the width (in pixels) of space horizontally to be used
-     * @param mazeHeight the height (in pixels) of vertical space to be used
+     * @param canvas The canvas that the maze is being drawn on, if applicable
      */
-    public MazeStructure(int x, int y, double mazeWidth, double mazeHeight)
+    public MazeStructure(int x, int y, Canvas canvas)
     {
+
+
+        // Save the canvas
+        this.canvas = canvas;
 
         // Initialize data storage arrays
         hWalls = new int[x][y-1];
@@ -55,17 +63,26 @@ public class MazeStructure
         cells = new int[x][y];
 
         // Save width and height
-        this.mazeWidth = mazeWidth;
-        this.mazeHeight = mazeHeight;
+        this.mazeWidth = canvas.getWidth();
+        this.mazeHeight = canvas.getHeight();
 
         // Save the cell number width and height
         width = x;
         height = y;
 
-        // Calculate the cell sizes so we don't have to later
-        cellWidth = mazeWidth/width;
-        cellHeight = mazeHeight/height;
+        System.out.println(canvas.getWidth());
+        System.out.println(mazeWidth + " / " + width);
 
+        // Calculate the cell sizes so we don't have to later
+        cellWidth = min((mazeWidth+20)/width,(mazeHeight+20)/height);
+        cellHeight = min((mazeHeight+20)/height, (mazeWidth+20)/width);
+        System.out.println(cellWidth + ", " + cellHeight);
+
+    }
+
+    public void addCanvas(Canvas canvas)
+    {
+        this.canvas = canvas;
     }
 
     /**
@@ -76,34 +93,52 @@ public class MazeStructure
     {
 
         // If nothing has updated just don't bother redrawing anything yet
-        if (redrawFlag == false)
+        if (redrawFlag == false & mazeWidth == canvas.getWidth() & mazeHeight == canvas.getHeight())
             return;
+
+        // Adjust height since something change
+        mazeWidth = canvas.getWidth();
+        mazeHeight = canvas.getHeight();
+
+        // Since it's possible the positions have changed we:
+        // Calculate the scale of everything again
+        if (mazeWidth < mazeHeight)
+        {
+            cellHeight = (mazeWidth-20)/width;
+            cellWidth = cellHeight; // Keepin' it square
+            originY = (mazeHeight-(cellHeight*height))/2;
+            originX = 10;
+        }
+        else
+        {
+            cellWidth = (mazeHeight-20)/height;
+            cellHeight = cellWidth; // Keepin' it square
+            originX = (mazeWidth-(cellWidth*width))/2;
+            originY = 10;
+        }
 
         // If something has updated we need to clear the canvas for redraw
         gc.clearRect(0, 0, mazeWidth, mazeHeight);
 
+        System.out.println("Draw");
 
-
+        // Stroke the borders of the maze before doing anything else
         gc.save();
-        gc.setStroke(Color.PINK);
-        gc.strokeRect(0, 0, mazeWidth, mazeHeight);
+        gc.setStroke(Color.BLACK);
+        gc.strokeRect(originX, originY, cellWidth*width, cellHeight*height);
         gc.restore();
 
         // NOTE: Nested for loops are not ideal, obviously, but in this case we know we're working with relatively few
         // items, so it should be okay for this application
 
-
-
         // then draw the CELLS
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-
                 if (cells[x][y] == 0)
                     gc.setFill(Color.LIGHTGRAY);
                 else if (cells[x][y] == 1)
                     gc.setFill(Color.WHITE);
-
-                gc.fillRect(cellWidth*x, cellHeight*y, cellWidth, cellHeight);
+                gc.fillRect(cellWidth*x+originX, cellHeight*y+originY, cellWidth, cellHeight);
 
             }
         }
@@ -122,7 +157,8 @@ public class MazeStructure
                 else if (vWalls[x][y] == -1)
                     continue;
 
-                gc.strokeLine((x+1)*cellWidth, (y)*cellHeight, (x+1)*cellWidth, (y+1)*cellHeight);
+                gc.strokeLine((x+1)*cellWidth+originX, (y)*cellHeight+originY,
+                        (x+1)*cellWidth+originX, (y+1)*cellHeight+originY);
 
             }
         }
@@ -141,13 +177,24 @@ public class MazeStructure
                 else if (hWalls[x][y] == -1)
                     continue;
 
-                gc.strokeLine((x)*cellWidth, (y+1)*cellHeight, (x+1)*cellWidth, (y+1)*cellHeight);
+                gc.strokeLine((x)*cellWidth+originX, (y+1)*cellHeight+originY,
+                        (x+1)*cellWidth+originX, (y+1)*cellHeight+originY);
 
             }
         }
 
         redrawFlag = false;
 
+    }
+
+    /**
+     * sets the redraw flag for the associated maze
+     * @param flag How you would like the flag set
+     */
+    public void setRedrawFlag(boolean flag)
+    {
+        // Set flag equal to passed parameters
+        redrawFlag = flag;
     }
 
     /**

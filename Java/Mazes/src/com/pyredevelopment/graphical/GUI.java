@@ -1,11 +1,14 @@
 package com.pyredevelopment.graphical;
 
+import com.pyredevelopment.cutility.ResizableCanvas;
 import com.pyredevelopment.generationalgorithms.PrimGenerator;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application; // Required for JFX application
+import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -15,6 +18,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import static java.lang.Thread.sleep;
@@ -28,9 +33,11 @@ import static java.lang.Thread.sleep;
 public class GUI extends Application
 {
 
-    private PrimGenerator prim; // This is what is going to be handling the algorithm
-    private TextManager tm;     // This is what will be handling updating the text
+    private PrimGenerator prim;             // This is what is going to be handling the algorithm
+    private TextManager tm;                 // This is what will be handling updating the text
 
+    private boolean completeFlag = false;   // If this is set to true the GUI will continue calling step until finished
+    private boolean stepFlag = false;       // Indicates step to be taken on next draw
     /**
      * This is enteredwhen the application is launched
      * @param primaryStage The main window of the application
@@ -57,6 +64,8 @@ public class GUI extends Application
 
         // Create the title and add it to the header HBox
         Label titleLabel = new Label("Prim's Maze Generation");
+        titleLabel.setFont(Font.font("Helvetica", 24));
+        titleLabel.setTextAlignment(TextAlignment.CENTER);
         header.getChildren().add(titleLabel);
 
         // Add in the spacer between title and buttons
@@ -71,8 +80,7 @@ public class GUI extends Application
             @Override
             public void handle(ActionEvent event)
             {
-                System.out.println("Next step!");
-                prim.nextStep();
+                stepFlag = true;
             }
         });
         header.getChildren().add(stepButton);
@@ -84,7 +92,8 @@ public class GUI extends Application
             @Override
             public void handle(ActionEvent event)
             {
-                while (prim.nextStep() == false);
+                // Set complete flag to true to indicate continue drawing
+                completeFlag = true;
             }
         });
         header.getChildren().add(finishButton);
@@ -101,12 +110,12 @@ public class GUI extends Application
         });
         header.getChildren().add(skipButton);
 
+
+
         // Create and add canvas to an HBOX then root
-        Canvas mazeCanvas = new Canvas(500, 500);
-        HBox canvasHolder = new HBox();
-        canvasHolder.getChildren().add(mazeCanvas);
-        canvasHolder.setPadding(new Insets(10, 10, 10, 10));
-        root.getChildren().add(canvasHolder);
+        Canvas mazeCanvas = new ResizableCanvas();
+        VBox.setVgrow(mazeCanvas, Priority.ALWAYS);
+        root.getChildren().add(mazeCanvas);
 
         // Save the maze canvas graphics context
         GraphicsContext mgc = mazeCanvas.getGraphicsContext2D();
@@ -127,6 +136,7 @@ public class GUI extends Application
         tm.addText(0, 1, "2. Remove the wall from the list");
 
         // Then create a Prim generator and attach it to mazeCanvas
+        System.out.println(mazeCanvas.getWidth());
         prim = new PrimGenerator(mazeCanvas, tm);
 
         // Create footer containing (myInfo      Save Maze, Load Maze)
@@ -164,6 +174,17 @@ public class GUI extends Application
             {
                 // Clear both canvases at the beginning of every frame
                 tgc.clearRect(0, 0, textCanvas.getWidth(), textCanvas.getHeight());
+
+                if (stepFlag || completeFlag)
+                {
+                    prim.nextStep();
+                    stepFlag = false;
+
+                    if (prim.isComplete()) {
+                        completeFlag = false;
+                    }
+                }
+
                 tm.draw();
                 prim.draw();
             }

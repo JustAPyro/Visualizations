@@ -62,13 +62,38 @@ public class PrimGenerator
         height = canvas.getHeight();
 
         // Since no com.pyredevelopment.maze.MazeStructure was offered in this constructor, we create a new one
-        maze = new MazeStructure(8, 8, width, height);
+        // TODO: This is broken for non-square mazes
+        maze = new MazeStructure(8, 8, canvas);
 
         // Initalized the walls array
         saved = new ArrayList<Wall>();
 
     }
 
+    /**
+     * This updates the maze to make sure it's all up to date
+     */
+    public void update()
+    {
+        maze.setRedrawFlag(true);
+    }
+
+    /**
+     * Determines if the maze is complete or not yet
+     * @return True if maze is completed, false otherwise
+     */
+    public boolean isComplete()
+    {
+        // If there are no walls in the saved list and we're not on the first step
+        System.out.println(saved.size() + ", " + currentStep);
+        if (saved.size() == 0 && currentStep > 0)
+        {
+            // The maze must be completed so finish the list
+            return true;
+        }
+        // Otherwise maze construction still in progress
+        return false;
+    }
 
 
     /**
