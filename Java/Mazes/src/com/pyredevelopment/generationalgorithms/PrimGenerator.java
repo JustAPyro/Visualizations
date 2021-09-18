@@ -91,6 +91,9 @@ public class PrimGenerator
 
     public void unpack(MazeStructure m)
     {
+        // Reset to step 0
+        currentStep = 0;
+
         // If provided, unpack the provided maze as well
         maze = m;
 

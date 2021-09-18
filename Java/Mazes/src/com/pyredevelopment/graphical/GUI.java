@@ -177,7 +177,7 @@ public class GUI extends Application
             @Override
             public void handle(ActionEvent event)
             {
-                while (prim.nextStep() == false);
+                prim.unpack(new MazeStructure(8, 8, mazeCanvas));
             }
         });
         newMaze.setPrefSize(100, 30);
