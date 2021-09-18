@@ -1,9 +1,11 @@
 package com.pyredevelopment.maze;
 
+import com.pyredevelopment.cutility.CUtility;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -188,6 +190,23 @@ public class MazeStructure implements Serializable
 
         redrawFlag = false;
 
+    }
+
+    public static MazeStructure loadMaze(File file)
+    {
+        // Load the object from provided files
+        Object obj = CUtility.LoadObjectFromFile(file);
+
+        // If the object is truely a maze structure
+        if (obj.getClass() == MazeStructure.class)
+        {
+            // Cast and return it
+            return (MazeStructure) obj;
+        }
+        else
+        {
+            throw new RuntimeException("Error loading file: found " + obj.getClass() + " instead of expected MazeStructure");
+        }
     }
 
     public void setCanvas(Canvas canvas)

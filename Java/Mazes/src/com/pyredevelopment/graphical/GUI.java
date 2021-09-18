@@ -224,7 +224,25 @@ public class GUI extends Application
             @Override
             public void handle(ActionEvent event)
             {
-                while (prim.nextStep() == false);
+                // Create a new file Chooser
+                FileChooser fileChooser = new FileChooser();
+
+                // Set the title to save
+                fileChooser.setTitle("Load");
+
+                // Set default to .maze
+                fileChooser.setInitialFileName("*.maze");
+
+                // Show all files or just .maze files
+                fileChooser.getExtensionFilters().addAll(
+                        new FileChooser.ExtensionFilter("Mazes", "*.maze"),
+                        new FileChooser.ExtensionFilter("All Files", "*.*"));
+
+                // Get the file they want to save to
+                File file = fileChooser.showOpenDialog(primaryStage);
+
+                MazeStructure m = MazeStructure.loadMaze(file);
+                prim.unpack(m);
             }
         });
         loadMaze.setPrefSize(100, 30);

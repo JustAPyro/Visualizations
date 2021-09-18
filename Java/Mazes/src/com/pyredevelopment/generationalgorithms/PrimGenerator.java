@@ -85,7 +85,20 @@ public class PrimGenerator
 
     public void unpack()
     {
+        // Update the canvas
         maze.setCanvas(canvas);
+    }
+
+    public void unpack(MazeStructure m)
+    {
+        // If provided, unpack the provided maze as well
+        maze = m;
+
+        // Reset the canvas after serializations
+        maze.setCanvas(canvas);
+
+        // Set the canvas to be redrawn to be affected by update
+        maze.setRedrawFlag(true);
     }
 
     /**
