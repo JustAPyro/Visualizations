@@ -9,8 +9,6 @@ import javafx.scene.canvas.GraphicsContext;
 import java.util.ArrayList;
 import java.util.Random;
 
-import static java.lang.Thread.sleep;
-
 /*
 Implementation of Randomized Prim's Algorithm in maze generation, using com.pyredevelopment.maze.MazeStructure.
 Implemented by Luke Hanna (github.com/JustAPyro)
@@ -33,12 +31,11 @@ https://docs.google.com/document/d/10b-LSSGvkl0g05j54R10NhtFlJdlgE82eGOzjwQn1sg/
 public class PrimGenerator
 {
 
-    private Canvas canvas;          // The canvas the com.pyredevelopment.generationalgorithms.PrimGenerator works on primarily
-    private GraphicsContext gc;     // The graphics context that is mainly used
-    private double width, height;   // Parameters for width/height of the canvas
+    private final Canvas canvas;          // The canvas the com.pyredevelopment.generationalgorithms.PrimGenerator works on primarily
+    private final GraphicsContext gc;     // The graphics context that is mainly used
     private MazeStructure maze;     // The maze structure this generator will work with
     private int currentStep = 0;    // Represents the current step of the algorithm
-    private TextManager tm;         // The text manager that will draw text associated with algoirthm
+    private final TextManager tm;         // The text manager that will draw text associated with algorithm
     ArrayList<Wall> saved;          // List of saved walls
     int selectedIndex = 0;          // Working index to track
     Wall workingWall;
@@ -58,15 +55,13 @@ public class PrimGenerator
 
         // Calculate additional necessary parameters on creation so we don't have to do it later
         gc = canvas.getGraphicsContext2D();
-        width = canvas.getWidth();
-        height = canvas.getHeight();
 
         // Since no com.pyredevelopment.maze.MazeStructure was offered in this constructor, we create a new one
         // TODO: This is broken for non-square mazes
         maze = new MazeStructure(8, 8, canvas);
 
-        // Initalized the walls array
-        saved = new ArrayList<Wall>();
+        // Initialized the walls array
+        saved = new ArrayList<>();
 
     }
 
@@ -105,14 +100,6 @@ public class PrimGenerator
     }
 
     /**
-     * This updates the maze to make sure it's all up to date
-     */
-    public void update()
-    {
-        maze.setRedrawFlag(true);
-    }
-
-    /**
      * Determines if the maze is complete or not yet
      * @return True if maze is completed, false otherwise
      */
@@ -120,13 +107,9 @@ public class PrimGenerator
     {
         // If there are no walls in the saved list and we're not on the first step
         System.out.println(saved.size() + ", " + currentStep);
-        if (saved.size() == 0 && currentStep > 0)
-        {
-            // The maze must be completed so finish the list
-            return true;
-        }
+        // The maze must be completed so finish the list
+        return saved.size() == 0 && currentStep > 0;
         // Otherwise maze construction still in progress
-        return false;
     }
 
 
@@ -135,9 +118,6 @@ public class PrimGenerator
      */
     public boolean nextStep()
     {
-        boolean subloop = false;
-
-
         // Step = "Pick a cell, mark it as part of the maze and add walls to wall list
         if (currentStep == 0)
         {
@@ -172,7 +152,7 @@ public class PrimGenerator
             tm.selectText(2);
             currentStep++;
         }
-        // Step = Pick a random wall from the list. If only one of the two cells that the wall divides is visiten, then:
+        // Step = Pick a random wall from the list. If only one of the two cells that the wall divides is visited, then:
         else if (currentStep == 2)
         {
 
@@ -201,7 +181,6 @@ public class PrimGenerator
             if (maze.getValue(cells[0]) == 1 ^ maze.getValue(cells[1]) == 1)
             {
                 System.out.println(cells[0] + ", " + cells[1]);
-                subloop = true;
                 tm.updateText(3, "1. Pick a random wall from the list. If only one of the two cells that the wall divides is visited, then: (True)");
 
             }
@@ -266,10 +245,7 @@ public class PrimGenerator
             tm.selectText(6);
             currentStep = 1;
         }
-        if (saved.size() == 0 && currentStep < 2)
-            return true;
-        else
-            return false;
+        return saved.size() == 0 && currentStep < 2;
     }
 
     /**
