@@ -70,6 +70,24 @@ public class PrimGenerator
 
     }
 
+
+    /**
+     * Packs up the maze structure by removing un-necessary (and un-serializable objects)
+     * and returning it. After serializing, if you wish to continue using, call "Unpack()"
+     * @return The current maze that the generator is working on
+     */
+    public MazeStructure pack()
+    {
+
+        maze.setCanvas(null);
+        return maze;
+    }
+
+    public void unpack()
+    {
+        maze.setCanvas(canvas);
+    }
+
     /**
      * This updates the maze to make sure it's all up to date
      */

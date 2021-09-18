@@ -4,6 +4,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import static java.lang.Math.min;
@@ -13,8 +14,9 @@ import static java.lang.Math.min;
  *
  * This class is meant to comprehensively represent a maze structure
  * as well as provide any functionality necessary for the demonstration of maze generation and solving
+ * Implements serializable so that the maze object can be saved and restored at will
  */
-public class MazeStructure
+public class MazeStructure implements Serializable
 {
 
     // Set default origin point to 0, 0
@@ -93,7 +95,8 @@ public class MazeStructure
     {
 
         // If nothing has updated just don't bother redrawing anything yet
-        if (redrawFlag == false & mazeWidth == canvas.getWidth() & mazeHeight == canvas.getHeight())
+        // Note the use of bitwise OR - if canvas is null we avoid calling canvas.getwidth() and avoid errors
+        if (canvas == null || (redrawFlag == false & mazeWidth == canvas.getWidth() & mazeHeight == canvas.getHeight()))
             return;
 
         // Adjust height since something change
@@ -186,6 +189,12 @@ public class MazeStructure
         redrawFlag = false;
 
     }
+
+    public void setCanvas(Canvas canvas)
+    {
+        this.canvas = canvas;
+    }
+
 
     /**
      * sets the redraw flag for the associated maze

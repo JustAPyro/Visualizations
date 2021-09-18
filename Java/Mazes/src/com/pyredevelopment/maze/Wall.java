@@ -1,9 +1,12 @@
 package com.pyredevelopment.maze;
 
+import java.io.Serializable;
+
 /**
  * This class represents a specific wall to be used by maze structure
+ * Implements serializable to assist in serializing maze structure
  */
-public class Wall
+public class Wall implements Serializable
 {
 
     char o;     // Represents orientation, (Horizontal/vertical/cell)

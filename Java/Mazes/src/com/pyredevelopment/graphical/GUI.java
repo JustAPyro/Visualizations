@@ -1,7 +1,9 @@
 package com.pyredevelopment.graphical;
 
+import com.pyredevelopment.cutility.CUtility;
 import com.pyredevelopment.cutility.ResizableCanvas;
 import com.pyredevelopment.generationalgorithms.PrimGenerator;
+import com.pyredevelopment.maze.MazeStructure;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application; // Required for JFX application
 import javafx.beans.value.ChangeListener;
@@ -20,7 +22,10 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import java.io.File;
 
 import static java.lang.Thread.sleep;
 
@@ -167,16 +172,61 @@ public class GUI extends Application
 
         // Create and add new maze button
         Button newMaze = new Button("New Maze");
+        newMaze.setOnAction(new EventHandler<ActionEvent>()
+        {
+            @Override
+            public void handle(ActionEvent event)
+            {
+                while (prim.nextStep() == false);
+            }
+        });
         newMaze.setPrefSize(100, 30);
         footer.getChildren().add(newMaze);
 
         // Create and add save maze button
         Button saveMaze = new Button("Save Maze");
+        saveMaze.setOnAction(new EventHandler<ActionEvent>()
+        {
+            @Override
+            public void handle(ActionEvent event)
+            {
+                // Create a new file Chooser
+                FileChooser fileChooser = new FileChooser();
+
+                // Set the title to save
+                fileChooser.setTitle("Save");
+
+                // Set default to .maze
+                fileChooser.setInitialFileName("*.maze");
+
+                // Show all files or just .maze files
+                fileChooser.getExtensionFilters().addAll(
+                        new FileChooser.ExtensionFilter("All Files", "*.*"),
+                        new FileChooser.ExtensionFilter("Mazes", "*.maze"));
+
+                // Get the file they want to save to
+                File file = fileChooser.showSaveDialog(primaryStage);
+
+                MazeStructure mz = prim.pack();
+                CUtility.WriteObjectToFile(file, mz);
+                prim.unpack();
+
+
+            }
+        });
         saveMaze.setPrefSize(100, 30);
         footer.getChildren().add(saveMaze);
 
         // Create and add load maze
         Button loadMaze = new Button("Load Maze");
+        loadMaze.setOnAction(new EventHandler<ActionEvent>()
+        {
+            @Override
+            public void handle(ActionEvent event)
+            {
+                while (prim.nextStep() == false);
+            }
+        });
         loadMaze.setPrefSize(100, 30);
         footer.getChildren().add(loadMaze);
 
