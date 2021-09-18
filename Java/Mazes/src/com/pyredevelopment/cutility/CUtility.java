@@ -12,7 +12,7 @@ public class CUtility
     /**
      * This allows you to write objects to file and (hopefully) catches any possible errors
      * to make life a little easier then re-writing this anytime you want to write to file
-     * @param file The established File that will be writted to
+     * @param file The established File that will be written to
      * @param obj The serializable Object you will be writing
      */
     public static void WriteObjectToFile(File file, Serializable obj)
@@ -32,16 +32,15 @@ public class CUtility
             // And close the stream behind us
             objectOut.close();
 
-        } catch (FileNotFoundException e) { // Catch error if file was invalid
+        } catch (IOException e) { // Catch error if file was invalid
             e.printStackTrace();
-        } catch (IOException e) { // Or if a IO exception occurs
-            e.printStackTrace();
-        }
+        }// Or if a IO exception occurs
+
     }
 
     /**
      * This is designed to simplify loading a file into an object.
-     * Note: It's advised to create a wrapper around this to filter and test as you unserialize the object
+     * Note: It's advised to create a wrapper around this to filter and test as you un-serialize the object
      * @param file That you want loaded
      */
     public static Object LoadObjectFromFile(File file)
@@ -50,7 +49,7 @@ public class CUtility
             // Create the input stream
             FileInputStream fileIn = new FileInputStream(file);
 
-            // Object input strea
+            // Object input stream
             ObjectInputStream objectIn = new ObjectInputStream(fileIn);
 
             // Read the object from file

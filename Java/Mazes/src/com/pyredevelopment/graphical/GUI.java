@@ -6,7 +6,6 @@ import com.pyredevelopment.generationalgorithms.PrimGenerator;
 import com.pyredevelopment.maze.MazeStructure;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application; // Required for JFX application
-import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -27,8 +26,6 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-import static java.lang.Thread.sleep;
-
 /**
  * This class is in charge of drawing the wireframe and com.pyredevelopment.graphical.GUI in the associated report
  * (https://docs.google.com/document/d/10b-LSSGvkl0g05j54R10NhtFlJdlgE82eGOzjwQn1sg/edit?usp=sharing)
@@ -44,12 +41,11 @@ public class GUI extends Application
     private boolean completeFlag = false;   // If this is set to true the GUI will continue calling step until finished
     private boolean stepFlag = false;       // Indicates step to be taken on next draw
     /**
-     * This is enteredwhen the application is launched
+     * This is entered when the application is launched
      * @param primaryStage The main window of the application
-     * @throws Exception
      */
     @Override
-    public void start(Stage primaryStage) throws Exception
+    public void start(Stage primaryStage)
     {
         // Title
         primaryStage.setTitle("Prim's Maze Generator");
@@ -82,52 +78,30 @@ public class GUI extends Application
         // Create and add step button as well as set pref size
         Button stepButton = new Button("Next Step");
         stepButton.setPrefSize(100, 30);
-        stepButton.setOnAction(new EventHandler<ActionEvent>()
-        {
-            @Override
-            public void handle(ActionEvent event)
-            {
-                stepFlag = true;
-            }
-        });
+        stepButton.setOnAction(event -> stepFlag = true);
         header.getChildren().add(stepButton);
 
         // Create and add finish button
         Button finishButton = new Button("Finish Maze");
         finishButton.setPrefSize(100, 30);
-        finishButton.setOnAction(new EventHandler<ActionEvent>()
-        {
-            @Override
-            public void handle(ActionEvent event)
-            {
-                // Set complete flag to true to indicate continue drawing
-                completeFlag = true;
-            }
+        finishButton.setOnAction(event -> {
+            // Set complete flag to true to indicate continue drawing
+            completeFlag = true;
         });
         header.getChildren().add(finishButton);
 
         // Create and add skip to end button
         Button skipButton = new Button("Skip to End");
         skipButton.setPrefSize(100, 30);
-        skipButton.setOnAction(new EventHandler<ActionEvent>()
-        {
-            @Override
-            public void handle(ActionEvent event)
-            {
-                while (prim.nextStep() == false);
-            }
+        skipButton.setOnAction(event -> {
+            while (!prim.nextStep());
         });
         header.getChildren().add(skipButton);
 
-        // Create and add canvas to an HBOX then root
+        // Create and add canvas to an BOX then root
         Canvas mazeCanvas = new ResizableCanvas();
         VBox.setVgrow(mazeCanvas, Priority.ALWAYS);
         root.getChildren().add(mazeCanvas);
-
-        // Save the maze canvas graphics context
-        GraphicsContext mgc = mazeCanvas.getGraphicsContext2D();
-
-
 
         // Create and add text canvas to root
         Canvas textCanvas = new ResizableCanvas();
@@ -146,7 +120,6 @@ public class GUI extends Application
         tm.addText(0, 1, "2. Remove the wall from the list");
 
         // Then create a Prim generator and attach it to mazeCanvas
-        System.out.println(mazeCanvas.getWidth());
         prim = new PrimGenerator(mazeCanvas, tm);
 
         // Create footer containing (myInfo      Save Maze, Load Maze)
@@ -172,78 +145,61 @@ public class GUI extends Application
 
         // Create and add new maze button
         Button newMaze = new Button("New Maze");
-        newMaze.setOnAction(new EventHandler<ActionEvent>()
-        {
-            @Override
-            public void handle(ActionEvent event)
-            {
-                prim.unpack(new MazeStructure(8, 8, mazeCanvas));
-            }
-        });
+        newMaze.setOnAction(event -> prim.unpack(new MazeStructure(8, 8, mazeCanvas)));
         newMaze.setPrefSize(100, 30);
         footer.getChildren().add(newMaze);
 
         // Create and add save maze button
         Button saveMaze = new Button("Save Maze");
-        saveMaze.setOnAction(new EventHandler<ActionEvent>()
-        {
-            @Override
-            public void handle(ActionEvent event)
-            {
-                // Create a new file Chooser
-                FileChooser fileChooser = new FileChooser();
+        saveMaze.setOnAction(event -> {
+            // Create a new file Chooser
+            FileChooser fileChooser = new FileChooser();
 
-                // Set the title to save
-                fileChooser.setTitle("Save");
+            // Set the title to save
+            fileChooser.setTitle("Save");
 
-                // Set default to .maze
-                fileChooser.setInitialFileName("*.maze");
+            // Set default to .maze
+            fileChooser.setInitialFileName("*.maze");
 
-                // Show all files or just .maze files
-                fileChooser.getExtensionFilters().addAll(
-                        new FileChooser.ExtensionFilter("All Files", "*.*"),
-                        new FileChooser.ExtensionFilter("Mazes", "*.maze"));
+            // Show all files or just .maze files
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("All Files", "*.*"),
+                    new FileChooser.ExtensionFilter("Mazes", "*.maze"));
 
-                // Get the file they want to save to
-                File file = fileChooser.showSaveDialog(primaryStage);
+            // Get the file they want to save to
+            File file = fileChooser.showSaveDialog(primaryStage);
 
-                MazeStructure mz = prim.pack();
-                CUtility.WriteObjectToFile(file, mz);
-                prim.unpack();
+            MazeStructure mz = prim.pack();
+            CUtility.WriteObjectToFile(file, mz);
+            prim.unpack();
 
 
-            }
         });
         saveMaze.setPrefSize(100, 30);
         footer.getChildren().add(saveMaze);
 
         // Create and add load maze
         Button loadMaze = new Button("Load Maze");
-        loadMaze.setOnAction(new EventHandler<ActionEvent>()
-        {
-            @Override
-            public void handle(ActionEvent event)
-            {
-                // Create a new file Chooser
-                FileChooser fileChooser = new FileChooser();
+        loadMaze.setOnAction(event -> {
+            // Create a new file Chooser
+            FileChooser fileChooser = new FileChooser();
 
-                // Set the title to save
-                fileChooser.setTitle("Load");
+            // Set the title to save
+            fileChooser.setTitle("Load");
 
-                // Set default to .maze
-                fileChooser.setInitialFileName("*.maze");
+            // Set default to .maze
+            fileChooser.setInitialFileName("*.maze");
 
-                // Show all files or just .maze files
-                fileChooser.getExtensionFilters().addAll(
-                        new FileChooser.ExtensionFilter("Mazes", "*.maze"),
-                        new FileChooser.ExtensionFilter("All Files", "*.*"));
+            // Show all files or just .maze files
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Mazes", "*.maze"),
+                    new FileChooser.ExtensionFilter("All Files", "*.*"));
 
-                // Get the file they want to save to
-                File file = fileChooser.showOpenDialog(primaryStage);
+            // Get the file they want to save to
+            File file = fileChooser.showOpenDialog(primaryStage);
 
-                MazeStructure m = MazeStructure.loadMaze(file);
-                prim.unpack(m);
-            }
+            MazeStructure m = MazeStructure.loadMaze(file);
+            prim.unpack(m);
         });
         loadMaze.setPrefSize(100, 30);
         footer.getChildren().add(loadMaze);

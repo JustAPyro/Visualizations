@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static java.lang.Math.min;
 
@@ -29,24 +30,25 @@ public class MazeStructure implements Serializable
     double mazeWidth, mazeHeight;
 
     // The total set of cells
-    double width, height;
+    final double width;
+    final double height;
 
     // pixel width of cells
     double cellWidth, cellHeight;
 
-    // RedrawFlag indicates if the com.pyredevelopment.graphical.GUI needs to be refereshed
+    // RedrawFlag indicates if the com.pyredevelopment.graphical.GUI needs to be refreshed
     boolean redrawFlag = true;
 
     private Canvas canvas;
 
-    int[][] hWalls;     // Represents horizontal maze walls
-    int[][] vWalls;     // Represents vertical maze walls
-    int[][] cells;    // Represents all maze cell status
+    final int[][] hWalls;     // Represents horizontal maze walls
+    final int[][] vWalls;     // Represents vertical maze walls
+    final int[][] cells;    // Represents all maze cell status
 
 
 
     // Create a list of saved walls
-    ArrayList<Wall> saved = new ArrayList<Wall>();
+    ArrayList<Wall> saved = new ArrayList<>();
 
     /**
      * This create a basic maze structure object to work with
@@ -74,31 +76,23 @@ public class MazeStructure implements Serializable
         width = x;
         height = y;
 
-        System.out.println(canvas.getWidth());
-        System.out.println(mazeWidth + " / " + width);
-
         // Calculate the cell sizes so we don't have to later
         cellWidth = min((mazeWidth+20)/width,(mazeHeight+20)/height);
         cellHeight = min((mazeHeight+20)/height, (mazeWidth+20)/width);
-        System.out.println(cellWidth + ", " + cellHeight);
 
-    }
-
-    public void addCanvas(Canvas canvas)
-    {
-        this.canvas = canvas;
     }
 
     /**
      * This draws the maze structure graphically using whatever graphics context is provided
      * @param gc The graphics Context you'd like the maze drawn with
      */
+    @SuppressWarnings("SuspiciousNameCombination")
     public void draw(GraphicsContext gc)
     {
 
         // If nothing has updated just don't bother redrawing anything yet
-        // Note the use of bitwise OR - if canvas is null we avoid calling canvas.getwidth() and avoid errors
-        if (canvas == null || (redrawFlag == false & mazeWidth == canvas.getWidth() & mazeHeight == canvas.getHeight()))
+        // Note the use of bitwise OR - if canvas is null we avoid calling canvas.width() and avoid errors
+        if (canvas == null || (!redrawFlag & mazeWidth == canvas.getWidth() & mazeHeight == canvas.getHeight()))
             return;
 
         // Adjust height since something change
@@ -110,22 +104,21 @@ public class MazeStructure implements Serializable
         if (mazeWidth < mazeHeight)
         {
             cellHeight = (mazeWidth-20)/width;
-            cellWidth = cellHeight; // Keepin' it square
+            cellWidth = cellHeight; // Keeping' it square
             originY = (mazeHeight-(cellHeight*height))/2;
             originX = 10;
         }
         else
         {
             cellWidth = (mazeHeight-20)/height;
-            cellHeight = cellWidth; // Keepin' it square
+            //noinspection SuspiciousNameCombination
+            cellHeight = cellWidth; // Keeping' it square
             originX = (mazeWidth-(cellWidth*width))/2;
             originY = 10;
         }
 
         // If something has updated we need to clear the canvas for redraw
         gc.clearRect(0, 0, mazeWidth, mazeHeight);
-
-        System.out.println("Draw");
 
         // Stroke the borders of the maze before doing anything else
         gc.save();
@@ -197,16 +190,21 @@ public class MazeStructure implements Serializable
         // Load the object from provided files
         Object obj = CUtility.LoadObjectFromFile(file);
 
-        // If the object is truely a maze structure
-        if (obj.getClass() == MazeStructure.class)
+
+        // If the object is truly a maze structure
+        if (Objects.requireNonNull(obj).getClass() == MazeStructure.class)
         {
+
             // Cast and return it
             return (MazeStructure) obj;
+
         }
         else
         {
             throw new RuntimeException("Error loading file: found " + obj.getClass() + " instead of expected MazeStructure");
         }
+
+
     }
 
     public void setCanvas(Canvas canvas)
@@ -235,7 +233,7 @@ public class MazeStructure implements Serializable
         //TODO: Make sure that this won't IndexOutOfBoundsException
 
         // Create an arraylist to return
-        ArrayList<Wall> ret = new ArrayList<Wall>();
+        ArrayList<Wall> ret = new ArrayList<>();
 
         // Save the new walls to the saved list
         // NOTE: We check to ensure no IndexOutOfBoundsException occurs
@@ -307,7 +305,7 @@ public class MazeStructure implements Serializable
             ret[1] = new Wall('c', w.x, w.y+1);
         }
 
-        // If it's a veritcal wall we return left and right cells
+        // If it's a vertical wall we return left and right cells
         if (w.o == 'v')
         {
             ret[0] = new Wall('c', w.x, w.y);
@@ -325,7 +323,7 @@ public class MazeStructure implements Serializable
      */
     public void colorWall(ArrayList<Wall> walls, int color)
     {
-        System.out.println(walls.size());
+
         for (Wall w : walls)
         {
             if (w.o == 'h')
@@ -365,16 +363,6 @@ public class MazeStructure implements Serializable
 
         // Flag that we need to redraw based on new values
         redrawFlag = true;
-    }
-
-    /**
-     * This method simply returns the number of walls currently saved
-     * @return Number of saved walls
-     */
-    public int savedWallSize()
-    {
-        // Return the number of saved walls
-        return saved.size();
     }
 
     // Add to maze given indexes and then redraw

@@ -3,23 +3,17 @@ package com.pyredevelopment.graphical;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 
 public class TextManager
 {
 
-    private Canvas canvas;      // Canvas we will draw one
-    private GraphicsContext gc; // and associate graphicsContext
+    private final GraphicsContext gc; // and associate graphicsContext
 
-    private double width, height;   // Width and height of canvas
-
-    private ArrayList<String> lines = new ArrayList<String>();      // Saves the lines of text
-    private ArrayList<Integer> indent = new ArrayList<Integer>();   // Saves the amount of indent for each line
-    private ArrayList<Integer> index = new ArrayList<Integer>();    // Saves the index we can use to refer to it
-
-    private int selected = 0; // Shows which line of text is currently selected
+    private final ArrayList<String> lines = new ArrayList<>();      // Saves the lines of text
+    private final ArrayList<Integer> indent = new ArrayList<>();   // Saves the amount of indent for each line
+    private final ArrayList<Integer> index = new ArrayList<>();    // Saves the index we can use to refer to it
 
     /**
      * Basic constructor
@@ -28,12 +22,11 @@ public class TextManager
     public TextManager(Canvas canvas)
     {
         // Set the canvas with the parameter given
-        this.canvas = canvas;
+        // Canvas we will draw one
 
         // Then calculate graphics context/width/height so we don't have to later
         this.gc = canvas.getGraphicsContext2D();
-        width = canvas.getWidth();
-        height = canvas.getHeight();
+
     }
 
     public void selectText(int index)

@@ -9,8 +9,9 @@ import java.io.Serializable;
 public class Wall implements Serializable
 {
 
-    char o;     // Represents orientation, (Horizontal/vertical/cell)
-    int x, y;   // Represents x, y position
+    final char o;     // Represents orientation, (Horizontal/vertical/cell)
+    final int x;
+    final int y;   // Represents x, y position
 
     // - - - - - - - - - - Constructors - - - - - - - - - -
 
@@ -26,6 +27,7 @@ public class Wall implements Serializable
     // - - - - - - - - - - Getters / Setters - - - - - - - - - -
 
     // Get o (Represents orientation, horizontal, vertical or cell)
+    @SuppressWarnings("unused")
     public char getO()
     {
         return o;

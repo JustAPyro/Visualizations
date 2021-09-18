@@ -36,7 +36,7 @@ public class PrimGenerator
     private MazeStructure maze;     // The maze structure this generator will work with
     private int currentStep = 0;    // Represents the current step of the algorithm
     private final TextManager tm;         // The text manager that will draw text associated with algorithm
-    ArrayList<Wall> saved;          // List of saved walls
+    final ArrayList<Wall> saved;          // List of saved walls
     int selectedIndex = 0;          // Working index to track
     Wall workingWall;
 
@@ -50,8 +50,6 @@ public class PrimGenerator
         // Save the provided parameters
         this.canvas = canvas;
         this.tm = tm;
-        System.out.println("Saving tm!");
-        System.out.println(this.tm);
 
         // Calculate additional necessary parameters on creation so we don't have to do it later
         gc = canvas.getGraphicsContext2D();
@@ -106,16 +104,17 @@ public class PrimGenerator
     public boolean isComplete()
     {
         // If there are no walls in the saved list and we're not on the first step
-        System.out.println(saved.size() + ", " + currentStep);
         // The maze must be completed so finish the list
-        return saved.size() == 0 && currentStep > 0;
         // Otherwise maze construction still in progress
+        return saved.size() == 0 && currentStep > 0;
+
     }
 
 
     /**
      * Takes a step and then redraws the maze
      */
+    @SuppressWarnings("SuspiciousListRemoveInLoop")
     public boolean nextStep()
     {
         // Step = "Pick a cell, mark it as part of the maze and add walls to wall list
@@ -156,11 +155,6 @@ public class PrimGenerator
         else if (currentStep == 2)
         {
 
-            for (Wall w : saved)
-            {
-                System.out.println(w.getO() + " - " + w.getX() + ", " + w.getY());
-            }
-
             // Create a random generator
             Random rnd = new Random();
 
@@ -169,18 +163,13 @@ public class PrimGenerator
 
             // Color the wall to indicate it's been picked
             maze.colorWall(saved.get(selectedIndex), 11);
-            System.out.println(saved.get(selectedIndex).getO() + " wall at (" + saved.get(selectedIndex).getX() + ", " + saved.get(selectedIndex).getY());
 
             // Get the value of the two cells
             Wall[] cells = maze.getCells(saved.get(selectedIndex));
-            System.out.println(cells);
-
-
 
             // If ONLY (XOR) one of the cells has been visited, then:
             if (maze.getValue(cells[0]) == 1 ^ maze.getValue(cells[1]) == 1)
             {
-                System.out.println(cells[0] + ", " + cells[1]);
                 tm.updateText(3, "1. Pick a random wall from the list. If only one of the two cells that the wall divides is visited, then: (True)");
 
             }
@@ -227,8 +216,6 @@ public class PrimGenerator
                     surround.remove(i);
                 }
             }
-
-            System.out.println("Size of surround is: " + surround.size());
 
             // Color the provided walls in orange
             maze.colorWall(surround, 10);
