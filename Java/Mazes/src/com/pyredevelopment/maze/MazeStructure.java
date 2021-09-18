@@ -144,8 +144,8 @@ public class MazeStructure
         }
 
         // Start by drawing the VERTICAL LINES
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width - 1; x++) {
+        for (int y = 0; y < width; y++) {
+            for (int x = 0; x < height - 1; x++) {
                 if (vWalls[x][y] == 0)
                     gc.setStroke(Color.DARKGREY);
                 else if (vWalls[x][y] == 10)

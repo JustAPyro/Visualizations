@@ -32,7 +32,6 @@ public class ResizableCanvas extends Canvas
     public double minHeight(double width) {
         return 1D;
     }
-
     @Override
     public void resize(double width, double height) {
         this.setWidth(width);

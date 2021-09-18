@@ -56,8 +56,9 @@ public class GUI extends Application
         HBox header = new HBox();
 
         // Set some spacing and padding in the header
-        header.setPadding(new Insets(10, 10, 10, 10));
+        header.setPadding(new Insets(10, 20, 10, 20));
         header.setSpacing(10);
+        header.setAlignment(Pos.CENTER);
 
         // Add the header to root
         root.getChildren().add(header);
@@ -73,8 +74,9 @@ public class GUI extends Application
         header.getChildren().add(spacerHead);
         HBox.setHgrow(spacerHead, Priority.ALWAYS);
 
-        // Create and add step button
+        // Create and add step button as well as set pref size
         Button stepButton = new Button("Next Step");
+        stepButton.setPrefSize(100, 30);
         stepButton.setOnAction(new EventHandler<ActionEvent>()
         {
             @Override
@@ -87,6 +89,7 @@ public class GUI extends Application
 
         // Create and add finish button
         Button finishButton = new Button("Finish Maze");
+        finishButton.setPrefSize(100, 30);
         finishButton.setOnAction(new EventHandler<ActionEvent>()
         {
             @Override
@@ -100,6 +103,7 @@ public class GUI extends Application
 
         // Create and add skip to end button
         Button skipButton = new Button("Skip to End");
+        skipButton.setPrefSize(100, 30);
         skipButton.setOnAction(new EventHandler<ActionEvent>()
         {
             @Override
@@ -110,8 +114,6 @@ public class GUI extends Application
         });
         header.getChildren().add(skipButton);
 
-
-
         // Create and add canvas to an HBOX then root
         Canvas mazeCanvas = new ResizableCanvas();
         VBox.setVgrow(mazeCanvas, Priority.ALWAYS);
@@ -120,9 +122,12 @@ public class GUI extends Application
         // Save the maze canvas graphics context
         GraphicsContext mgc = mazeCanvas.getGraphicsContext2D();
 
+
+
         // Create and add text canvas to root
-        Canvas textCanvas = new Canvas(600, 200);
+        Canvas textCanvas = new ResizableCanvas();
         GraphicsContext tgc = textCanvas.getGraphicsContext2D();
+        textCanvas.resize(0, 175);
         root.getChildren().add(textCanvas);
 
         // Create a text manager and attach it to textCanvas
@@ -143,14 +148,16 @@ public class GUI extends Application
         HBox footer = new HBox();
 
         // Set padding and spacing on footer
-        footer.setPadding(new Insets(10, 10, 10, 10));
+        footer.setPadding(new Insets(10, 20, 10, 20));
+        footer.setAlignment(Pos.CENTER);
         footer.setSpacing(10);
 
         // Add footer to root
         root.getChildren().add(footer);
 
         // Create and add Info label
-        Label infoLabel = new Label("Implementation by \n Luke Hanna  \n Github.com/JustAPyro");
+        Label infoLabel = new Label("Implementation by Luke Hanna\nGithub.com/JustAPyro | PyreDevelopment.com");
+        infoLabel.setFont(Font.font("Helvetica", 14));
         footer.getChildren().add(infoLabel);
 
         // Create and add spacer
@@ -158,12 +165,19 @@ public class GUI extends Application
         footer.getChildren().add(spacerFoot);
         HBox.setHgrow(spacerFoot, Priority.ALWAYS);
 
+        // Create and add new maze button
+        Button newMaze = new Button("New Maze");
+        newMaze.setPrefSize(100, 30);
+        footer.getChildren().add(newMaze);
+
         // Create and add save maze button
         Button saveMaze = new Button("Save Maze");
+        saveMaze.setPrefSize(100, 30);
         footer.getChildren().add(saveMaze);
 
         // Create and add load maze
         Button loadMaze = new Button("Load Maze");
+        loadMaze.setPrefSize(100, 30);
         footer.getChildren().add(loadMaze);
 
         // ---------------- Now that the basic com.pyredevelopment.graphical.GUI is set up, start the animation loop! -----------

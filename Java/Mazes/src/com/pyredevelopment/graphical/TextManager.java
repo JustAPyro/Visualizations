@@ -75,8 +75,6 @@ public class TextManager
      */
     public void draw()
     {
-        // Stroke the outside border of our working panel
-        gc.strokeRect(0, 0, width, height);
 
         // Save the graphics context before we do anything else
         gc.save();
@@ -91,7 +89,7 @@ public class TextManager
                 gc.setFill(Color.RED);
 
             // Draw it, moving down based on i, and indenting based on given parameter
-            gc.fillText(lines.get(i), 25+20*indent.get(i), 20*i+25);
+            gc.fillText(lines.get(i), 50+20*indent.get(i), 20*i+25);
         }
     }
 
