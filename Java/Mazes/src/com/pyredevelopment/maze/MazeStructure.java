@@ -207,6 +207,11 @@ public class MazeStructure implements Serializable
 
     }
 
+    public Canvas getCanvas()
+    {
+        return canvas;
+    }
+
     public void setCanvas(Canvas canvas)
     {
         this.canvas = canvas;

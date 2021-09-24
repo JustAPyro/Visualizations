@@ -36,7 +36,6 @@ public class PrimGenerator extends Algorithm
 
     private final Canvas canvas;          // The canvas the com.pyredevelopment.generationalgorithms.PrimGenerator works on primarily
     private final GraphicsContext gc;     // The graphics context that is mainly used
-    private MazeStructure maze;     // The maze structure this generator will work with
     private int currentStep = 0;    // Represents the current step of the algorithm
     private final TextManager tm;         // The text manager that will draw text associated with algorithm
     final ArrayList<Wall> saved;          // List of saved walls
@@ -79,24 +78,7 @@ public class PrimGenerator extends Algorithm
         return maze;
     }
 
-    public void saveMaze(File file)
-    {
-        // Temporarily say canvas null during serialization
-        maze.setCanvas(null);
 
-        // Save the file to provided file
-        CUtility.WriteObjectToFile(file, maze);
-
-        // Restore the original canvas after file is saved
-        maze.setCanvas(canvas);
-    }
-
-
-    public void load()
-    {
-        // Update the canvas
-        maze.setCanvas(canvas);
-    }
 
     public void loadMaze(MazeStructure m)
     {
@@ -251,14 +233,5 @@ public class PrimGenerator extends Algorithm
         return saved.size() == 0 && currentStep < 2;
     }
 
-    /**
-     * Draws the current state of working com.pyredevelopment.maze.MazeStructure based on the com.pyredevelopment.generationalgorithms.PrimGenerator State
-     */
-    public void draw()
-    {
-
-        maze.draw(gc); // Draw the maze as desired
-
-    }
 
 }

@@ -227,7 +227,7 @@ public abstract class GUI extends Application
                 }
 
                 tm.draw();
-                alg.draw();
+                alg.draw(mazeCanvas.getGraphicsContext2D());
             }
         };
         timer.start();

@@ -1,14 +1,33 @@
 package com.pyredevelopment.maze;
 
+import com.pyredevelopment.cutility.CUtility;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+
 import java.io.File;
 
 public abstract class Algorithm
 {
 
+    protected MazeStructure maze;
+
     // - - - - - - - - - - File Storage / IO - - - - - - - - - -
 
-    // Saves the maze that the algorithm is working on (Useful for switching between generators/solvers
-    public abstract void saveMaze(File file);
+    // Allows you to save the maze file that the algorithm is working with
+    public void saveMaze(File file)
+    {
+        // Save the current canvas
+        Canvas savedCanvas = maze.getCanvas();
+
+        // Temporarily say canvas null during serialization
+        maze.setCanvas(null);
+
+        // Save the file to provided file
+        CUtility.WriteObjectToFile(file, maze);
+
+        // Restore the original canvas after file is saved
+        maze.setCanvas(savedCanvas);
+    }
 
     // Allows you to load a maze specific maze into the algorithm
     public abstract void loadMaze(MazeStructure m);
@@ -24,8 +43,9 @@ public abstract class Algorithm
     // - - - - - - - - - -
 
     // Draws a visual representation of the algorithm
-    public void draw()
+    public void draw(GraphicsContext gc)
     {
-
+        // Draw the maze!
+        maze.draw(gc);
     }
 }
