@@ -1,9 +1,10 @@
-package com.pyredevelopment.graphical;
+package com.pyredevelopment.drivers;
 
+import com.pyredevelopment.graphical.GUI;
 import javafx.application.Application; // Need this to call application.launch
 
 // Launches the Maze
-public class Driver
+public class PrimDriver
 {
 
     // Main method (Duh)
