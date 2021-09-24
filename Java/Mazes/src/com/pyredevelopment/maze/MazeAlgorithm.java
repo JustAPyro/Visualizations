@@ -2,7 +2,6 @@ package com.pyredevelopment.maze;
 
 import com.pyredevelopment.cutility.CUtility;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 
 import java.io.File;
 
@@ -17,6 +16,18 @@ public abstract class MazeAlgorithm
 
     // The primary canvas the maze is being visualized on to
     protected Canvas canvas;
+
+    // - - - - - - - - - - Maze Related Methods - - - - - - - - - -
+
+    /**
+     * Allows you to set the maze a given algorithm is working on (Note, if you're working with a .maze file you
+     * can just use the loadMaze(File) method instead of this
+     * @param maze
+     */
+    public void setMaze(MazeStructure maze)
+    {
+        this.maze = maze;
+    }
 
     // - - - - - - - - - - File Storage / IO - - - - - - - - - -
 
@@ -41,10 +52,12 @@ public abstract class MazeAlgorithm
 
     /**
      * This allows you to load a maze structure onto the current canvas
-     * @param maze The maze you wanted loaded in
+     * @param file The maze file you wanted loaded in
      */
-    public void loadMaze(MazeStructure maze)
+    public void loadMaze(File file)
     {
+        MazeStructure maze = MazeStructure.loadMaze(file);
+
         // Reset to step 0
         currentStep = 0;
 

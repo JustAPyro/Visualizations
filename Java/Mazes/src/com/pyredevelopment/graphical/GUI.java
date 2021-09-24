@@ -1,7 +1,6 @@
 package com.pyredevelopment.graphical;
 
 import com.pyredevelopment.cutility.ResizableCanvas;
-import com.pyredevelopment.algorithms_generators.GeneratorPrim;
 import com.pyredevelopment.maze.MazeAlgorithm;
 import com.pyredevelopment.maze.MazeStructure;
 import javafx.animation.AnimationTimer;
@@ -21,35 +20,45 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import java.io.File;
+
 
 /**
  * This class is in charge of drawing the wireframe and com.pyredevelopment.graphical.GUI in the associated report
  * (https://docs.google.com/document/d/10b-LSSGvkl0g05j54R10NhtFlJdlgE82eGOzjwQn1sg/edit?usp=sharing)
- * To display and navigate the maze generation
- * This is done using JavaFX and Canvas
+ * To display and navigate the maze generation. Primarily done using JavaFX and Canvas, and is designed
+ * to be a parent class to any Maze Generation/Solving GUI's
+ *
+ * @author Luke Hanna (Github.com/JustAPyro / PyreDevelopment.com)
+ * @version 1.1 - Updated 9/24/2021
  */
 public abstract class GUI extends Application
 {
 
-    protected String titleString;
-    protected String headerString;
-    protected String goalString;
-    protected MazeAlgorithm alg;
-    protected TextManager tm;
-    protected Canvas mazeCanvas;
-    protected Canvas textCanvas;
+
+    // These two protected values are initialized in the init function and can be ignored
+    protected Canvas mazeCanvas;    // Canvas on which maze is visualized
+    protected Canvas textCanvas;    // Canvas on which text is updated about algorithm
+
+    //======================================== IMPORTANT ========================================
+    // These variables must all be initialized before calling Super() in subclass Start function
+    // If it is not, an exception will be thrown at the beginning of launch TODO: Reimplement that
+    protected String titleString;       // Title of the window
+    protected String headerString;      // Title of the window header
+    protected String goalString;        // Complete ... ? Button
+    protected MazeAlgorithm alg;        // The algorithm being visualized
+    protected TextManager tm;           // The text manager handling text drawing
 
 
+    // These values are private and will be handled by individual method/functions call, can effectively be ignored
     private boolean completeFlag = false;   // If this is set to true the GUI will continue calling step until finished
     private boolean stepFlag = false;       // Indicates step to be taken on next draw
 
-
+    // This initializes the GUI before creating an maze or alg related items
     public void init()
     {
-        mazeCanvas = new ResizableCanvas();
-        textCanvas = new ResizableCanvas();
+        mazeCanvas = new ResizableCanvas(); // Create the maze canvas
+        textCanvas = new ResizableCanvas(); // Create the text canvas
     }
 
     /**
@@ -59,7 +68,6 @@ public abstract class GUI extends Application
     @Override
     public void start(Stage primaryStage)
     {
-
 
         // Title
         primaryStage.setTitle(titleString);
@@ -108,7 +116,11 @@ public abstract class GUI extends Application
         Button skipButton = new Button("Skip to End");
         skipButton.setPrefSize(100, 30);
         skipButton.setOnAction(event -> {
-            while (!alg.nextStep());
+            while (!alg.isComplete())
+            {
+                // While the algorithm isn't complete call nextStep function
+                alg.nextStep();
+            }
         });
         header.getChildren().add(skipButton);
 
@@ -144,13 +156,14 @@ public abstract class GUI extends Application
 
         // Create and add new maze button
         Button newMaze = new Button("New Maze");
-        newMaze.setOnAction(event -> alg.loadMaze(new MazeStructure(8, 8, mazeCanvas)));
+        newMaze.setOnAction(event -> alg.setMaze(new MazeStructure(8, 8, mazeCanvas)));
         newMaze.setPrefSize(100, 30);
         footer.getChildren().add(newMaze);
 
         // Create and add save maze button
         Button saveMaze = new Button("Save Maze");
         saveMaze.setOnAction(event -> {
+
             // Create a new file Chooser
             FileChooser fileChooser = new FileChooser();
 
@@ -194,8 +207,8 @@ public abstract class GUI extends Application
             // Get the file they want to save to
             File file = fileChooser.showOpenDialog(primaryStage);
 
-            MazeStructure m = MazeStructure.loadMaze(file);
-            alg.loadMaze(m);
+            // Load the maze from provided file
+            alg.loadMaze(file);
         });
         loadMaze.setPrefSize(100, 30);
         footer.getChildren().add(loadMaze);
@@ -206,23 +219,31 @@ public abstract class GUI extends Application
             @Override //overriding the handle function to animation
             public void handle(long now)
             {
-                // Clear both canvases at the beginning of every frame
+
+                // Clear the text canvas every frame
                 tgc.clearRect(0, 0, textCanvas.getWidth(), textCanvas.getHeight());
 
+                // if we are stepping further into the algorithm
                 if (stepFlag || completeFlag)
                 {
+                    // Take the next step and set the stepFlag to be false
                     alg.nextStep();
                     stepFlag = false;
 
+                    // If the algorithm is complete set completeFlag to false
                     if (alg.isComplete()) {
                         completeFlag = false;
                     }
                 }
 
+                // Draw the text manager
                 tm.draw();
+
+                // Draw the algorithm
                 alg.draw();
             }
         };
+        // Start the animation timer (This causes the above code to loop)
         timer.start();
 
         // Create and set a new JFX scene

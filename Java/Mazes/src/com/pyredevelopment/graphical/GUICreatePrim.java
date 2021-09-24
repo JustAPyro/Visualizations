@@ -5,7 +5,9 @@ import javafx.stage.Stage;
 
 /**
  * This class represents the visualization of maze generation using a randomized prim's algorithm.
- * Implementation by Luke Hanna (Github.com/JustAPyro / PyreDevelopment.com) on Sept 2021
+ *
+ * @author Luke Hanna (Github.com/JustAPyro / PyreDevelopment.com)
+ * @version 1.0 - Updated (9/24/2021)
  */
 public class GUICreatePrim extends GUI
 {
@@ -25,7 +27,7 @@ public class GUICreatePrim extends GUI
         // Declare GUI info
         titleString = "Prim's Maze Generation";     // Window title
         headerString = "Prim's Maze Generation";    // Window Header
-        goalString = "Maze";                        // Complete ... ? Button
+        goalString = "Maze";                        // Complete "Maze" button
 
         // Insert the Prim's algorithm text to solve this
         // Create a text manager and attach it to textCanvas
