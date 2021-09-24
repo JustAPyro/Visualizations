@@ -1,6 +1,7 @@
 package com.pyredevelopment.generationalgorithms;
 
 import com.pyredevelopment.graphical.TextManager;
+import com.pyredevelopment.maze.Algorithm;
 import com.pyredevelopment.maze.MazeStructure;
 import com.pyredevelopment.maze.Wall;
 import javafx.scene.canvas.Canvas;
@@ -28,7 +29,7 @@ Objective: Creating a easily understandable visualization of Prim's Maze generat
 You can find a write up of the original plans for the project here:
 https://docs.google.com/document/d/10b-LSSGvkl0g05j54R10NhtFlJdlgE82eGOzjwQn1sg/edit?usp=sharing
  */
-public class PrimGenerator
+public class PrimGenerator implements Algorithm
 {
 
     private final Canvas canvas;          // The canvas the com.pyredevelopment.generationalgorithms.PrimGenerator works on primarily
