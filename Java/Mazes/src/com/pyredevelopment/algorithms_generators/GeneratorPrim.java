@@ -31,7 +31,7 @@ https://docs.google.com/document/d/10b-LSSGvkl0g05j54R10NhtFlJdlgE82eGOzjwQn1sg/
 public class GeneratorPrim extends MazeAlgorithm
 {
 
-    private final TextManager tm;         // The text manager that will draw text associated with algorithm
+
     final ArrayList<Wall> saved;          // List of saved walls
     int selectedIndex = 0;          // Working index to track
     Wall workingWall;
@@ -43,6 +43,15 @@ public class GeneratorPrim extends MazeAlgorithm
      */
     public GeneratorPrim(Canvas canvas, TextManager tm)
     {
+
+        // Add the text that's associated with the algorithm
+        tm.addText(1, 0, "1. Start with a grid full of walls");
+        tm.addText(0, 0, "2. Pick a cell, mark it as part of the maze. Add the walls of the cell to the wall list.");
+        tm.addText(0, 0, "3. While there are walls in the list:");
+        tm.addText(0, 1, "1. Pick a random wall from the list. If only one of the two cells that the wall divides is visited, then:");
+        tm.addText(0, 2, "1. Make the wall a passage and mark the unvisited cell as part of the maze");
+        tm.addText(0, 2, "2. Add the neighboring walls of the cell to the wall list.");
+        tm.addText(0, 1, "2. Remove the wall from the list");
 
         currentStep = 0;
 
@@ -76,6 +85,7 @@ public class GeneratorPrim extends MazeAlgorithm
      * Determines if the maze is complete or not yet
      * @return True if maze is completed, false otherwise
      */
+    @Override
     public boolean isComplete()
     {
         // If there are no walls in the saved list and we're not on the first step
@@ -89,6 +99,7 @@ public class GeneratorPrim extends MazeAlgorithm
     /**
      * Takes a step and then redraws the maze
      */
+    @Override
     @SuppressWarnings("SuspiciousListRemoveInLoop")
     public boolean nextStep()
     {
@@ -210,5 +221,59 @@ public class GeneratorPrim extends MazeAlgorithm
         return saved.size() == 0 && currentStep < 2;
     }
 
+    // This performs a quick generation of prims algorithm on any given canvas, passing back the new maze structure
+    public static MazeStructure getRandomMaze(int x, int y, Canvas c)
+    {
+        // Create a new maze and a list for the working walls
+        MazeStructure maze = new MazeStructure(x, y, c);
+        ArrayList<Wall> saved = new ArrayList<Wall>();
 
+        // Get a random cell
+        Random rnd = new Random();
+        int rx = rnd.nextInt(x); int ry = rnd.nextInt(y);
+
+        // Add the random cell to the maze and the surrounding walls to saved
+        maze.addToMaze(rx, ry);
+        saved.addAll(maze.getSurroundingWalls(rx, ry));
+
+        // While there are walls in the list
+        while (saved.size() > 0)
+        {
+            // Pick a random wall value and remove it, then
+            Wall wall = saved.remove(rnd.nextInt(saved.size()));
+
+            // Get the two cells around this wall
+            Wall[] cells = maze.getCells(wall);
+
+            // If only one of those cells is visited
+            if (maze.getValue(cells[0]) == 1 ^ maze.getValue(cells[1]) == 1)
+            {
+                maze.breakWall(wall);
+
+                maze.addToMaze(cells[0].getX(), cells[0].getY());
+                maze.addToMaze(cells[1].getX(), cells[1].getY());
+
+                ArrayList<Wall> surroundings = maze.getSurroundingWalls(cells[0].getX(), cells[0].getY());
+                surroundings.addAll(maze.getSurroundingWalls(cells[1].getX(), cells[1].getY()));
+
+                for (int i = 0; i < surroundings.size(); i++)
+                {
+                    if (surroundings.get(i) == wall || saved.contains(surroundings.get(i)))
+                    {
+                        surroundings.remove(i);
+                    }
+                }
+
+                saved.addAll(surroundings);
+            }
+        }
+
+        return maze;
+    }
+
+    @Override
+    public void newMazeButton()
+    {
+        setMaze(new MazeStructure(8, 8, canvas));
+    }
 }

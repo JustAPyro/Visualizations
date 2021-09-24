@@ -51,6 +51,22 @@ public class MazeStructure implements Serializable
     ArrayList<Wall> saved = new ArrayList<>();
 
     /**
+     * Allows you to create a headless theoretical maze structure
+     * @param x
+     * @param y
+     */
+    public MazeStructure(int x, int y)
+    {
+        // Initialize data storage arrays
+        hWalls = new int[x][y-1];
+        vWalls = new int[y-1][x];
+        cells = new int[x][y];
+
+        width = x;
+        height = y;
+    }
+
+    /**
      * This create a basic maze structure object to work with
      * @param x The number of units(squares) horizontally in maze
      * @param y The number of units(Squares) vertically in maze

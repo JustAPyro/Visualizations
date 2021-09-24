@@ -156,7 +156,7 @@ public abstract class GUI extends Application
 
         // Create and add new maze button
         Button newMaze = new Button("New Maze");
-        newMaze.setOnAction(event -> alg.setMaze(new MazeStructure(8, 8, mazeCanvas)));
+        newMaze.setOnAction(event -> alg.newMazeButton());
         newMaze.setPrefSize(100, 30);
         footer.getChildren().add(newMaze);
 

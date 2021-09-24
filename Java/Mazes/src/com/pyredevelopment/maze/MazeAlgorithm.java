@@ -1,6 +1,7 @@
 package com.pyredevelopment.maze;
 
 import com.pyredevelopment.cutility.CUtility;
+import com.pyredevelopment.graphical.TextManager;
 import javafx.scene.canvas.Canvas;
 
 import java.io.File;
@@ -11,6 +12,9 @@ public abstract class MazeAlgorithm
     // This is the current step of the algorithm we are on
     protected int currentStep;
 
+    // This is the text manager that will dictate the algorithms process
+    protected TextManager tm;
+
     // The maze object that the algorithm is working with
     protected MazeStructure maze;
 
@@ -18,6 +22,9 @@ public abstract class MazeAlgorithm
     protected Canvas canvas;
 
     // - - - - - - - - - - Maze Related Methods - - - - - - - - - -
+
+    public abstract void newMazeButton();
+
 
     /**
      * Allows you to set the maze a given algorithm is working on (Note, if you're working with a .maze file you
@@ -84,6 +91,7 @@ public abstract class MazeAlgorithm
     // Draws a visual representation of the algorithm
     public void draw()
     {
+
         // Draw the maze!
         maze.draw(canvas.getGraphicsContext2D());
     }
