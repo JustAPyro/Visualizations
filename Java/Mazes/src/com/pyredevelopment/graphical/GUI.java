@@ -1,7 +1,7 @@
 package com.pyredevelopment.graphical;
 
 import com.pyredevelopment.cutility.ResizableCanvas;
-import com.pyredevelopment.generationalgorithms.GeneratorPrim;
+import com.pyredevelopment.algorithms_generators.GeneratorPrim;
 import com.pyredevelopment.maze.MazeAlgorithm;
 import com.pyredevelopment.maze.MazeStructure;
 import javafx.animation.AnimationTimer;

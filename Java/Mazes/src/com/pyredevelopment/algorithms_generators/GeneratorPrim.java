@@ -1,4 +1,4 @@
-package com.pyredevelopment.generationalgorithms;
+package com.pyredevelopment.algorithms_generators;
 
 import com.pyredevelopment.graphical.TextManager;
 import com.pyredevelopment.maze.MazeAlgorithm;
