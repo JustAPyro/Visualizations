@@ -1,14 +1,11 @@
 package com.pyredevelopment.graphical;
 
-import com.pyredevelopment.cutility.CUtility;
 import com.pyredevelopment.cutility.ResizableCanvas;
 import com.pyredevelopment.generationalgorithms.PrimGenerator;
 import com.pyredevelopment.maze.Algorithm;
 import com.pyredevelopment.maze.MazeStructure;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application; // Required for JFX application
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -154,7 +151,7 @@ public abstract class GUI extends Application
 
         // Create and add new maze button
         Button newMaze = new Button("New Maze");
-        newMaze.setOnAction(event -> alg.unpack(new MazeStructure(8, 8, mazeCanvas)));
+        newMaze.setOnAction(event -> alg.loadMaze(new MazeStructure(8, 8, mazeCanvas)));
         newMaze.setPrefSize(100, 30);
         footer.getChildren().add(newMaze);
 
@@ -178,11 +175,8 @@ public abstract class GUI extends Application
             // Get the file they want to save to
             File file = fileChooser.showSaveDialog(primaryStage);
 
-            MazeStructure mz = alg.pack();
-            CUtility.WriteObjectToFile(file, mz);
-            alg.unpack();
-
-
+            // Save the maze portion to working file
+            alg.saveMaze(file);
         });
         saveMaze.setPrefSize(100, 30);
         footer.getChildren().add(saveMaze);
@@ -208,7 +202,7 @@ public abstract class GUI extends Application
             File file = fileChooser.showOpenDialog(primaryStage);
 
             MazeStructure m = MazeStructure.loadMaze(file);
-            alg.unpack(m);
+            alg.loadMaze(m);
         });
         loadMaze.setPrefSize(100, 30);
         footer.getChildren().add(loadMaze);

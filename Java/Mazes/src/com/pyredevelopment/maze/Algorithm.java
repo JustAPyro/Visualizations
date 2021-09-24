@@ -1,23 +1,31 @@
 package com.pyredevelopment.maze;
 
-public interface Algorithm
+import java.io.File;
+
+public abstract class Algorithm
 {
 
-    // Allows you to unpack a maze onto the GUI
-    abstract void unpack(MazeStructure m);
+    // - - - - - - - - - - File Storage / IO - - - - - - - - - -
 
-    // Allows you to pack a maze a maze and return it in a serializable state
-    abstract MazeStructure pack();
+    // Saves the maze that the algorithm is working on (Useful for switching between generators/solvers
+    public abstract void saveMaze(File file);
+
+    // Allows you to load a maze specific maze into the algorithm
+    public abstract void loadMaze(MazeStructure m);
+
+    // - - - - - - - - - - Algorithm Related Methods - - - - - - - - - -
 
     // Returns true if algorithm is complete and false if not
-    abstract boolean isComplete();
+    public abstract boolean isComplete();
 
     // Takes the next step of the algorithm and returns true if it's complete
-    abstract boolean nextStep();
+    public abstract boolean nextStep();
 
-    // TODO: Figure out what in the world this is for
-    abstract void unpack();
+    // - - - - - - - - - -
 
     // Draws a visual representation of the algorithm
-    abstract void draw();
+    public void draw()
+    {
+
+    }
 }

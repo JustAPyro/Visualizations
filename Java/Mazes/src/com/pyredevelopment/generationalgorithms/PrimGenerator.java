@@ -1,5 +1,6 @@
 package com.pyredevelopment.generationalgorithms;
 
+import com.pyredevelopment.cutility.CUtility;
 import com.pyredevelopment.graphical.TextManager;
 import com.pyredevelopment.maze.Algorithm;
 import com.pyredevelopment.maze.MazeStructure;
@@ -7,6 +8,7 @@ import com.pyredevelopment.maze.Wall;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -29,7 +31,7 @@ Objective: Creating a easily understandable visualization of Prim's Maze generat
 You can find a write up of the original plans for the project here:
 https://docs.google.com/document/d/10b-LSSGvkl0g05j54R10NhtFlJdlgE82eGOzjwQn1sg/edit?usp=sharing
  */
-public class PrimGenerator implements Algorithm
+public class PrimGenerator extends Algorithm
 {
 
     private final Canvas canvas;          // The canvas the com.pyredevelopment.generationalgorithms.PrimGenerator works on primarily
@@ -77,13 +79,26 @@ public class PrimGenerator implements Algorithm
         return maze;
     }
 
-    public void unpack()
+    public void saveMaze(File file)
+    {
+        // Temporarily say canvas null during serialization
+        maze.setCanvas(null);
+
+        // Save the file to provided file
+        CUtility.WriteObjectToFile(file, maze);
+
+        // Restore the original canvas after file is saved
+        maze.setCanvas(canvas);
+    }
+
+
+    public void load()
     {
         // Update the canvas
         maze.setCanvas(canvas);
     }
 
-    public void unpack(MazeStructure m)
+    public void loadMaze(MazeStructure m)
     {
         // Reset to step 0
         currentStep = 0;
