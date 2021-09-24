@@ -1,8 +1,8 @@
 package com.pyredevelopment.graphical;
 
 import com.pyredevelopment.cutility.ResizableCanvas;
-import com.pyredevelopment.generationalgorithms.PrimGenerator;
-import com.pyredevelopment.maze.Algorithm;
+import com.pyredevelopment.generationalgorithms.GeneratorPrim;
+import com.pyredevelopment.maze.MazeAlgorithm;
 import com.pyredevelopment.maze.MazeStructure;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application; // Required for JFX application
@@ -36,7 +36,7 @@ public abstract class GUI extends Application
     protected String titleString;
     protected String headerString;
     protected String goalString;
-    protected Algorithm alg;
+    protected MazeAlgorithm alg;
 
     private TextManager tm;                 // This is what will be handling updating the text
 
@@ -126,7 +126,7 @@ public abstract class GUI extends Application
         tm.addText(0, 1, "2. Remove the wall from the list");
 
         // Then create a Prim generator and attach it to mazeCanvas
-        alg = new PrimGenerator(mazeCanvas, tm);
+        alg = new GeneratorPrim(mazeCanvas, tm);
 
         // Create footer containing (myInfo      Save Maze, Load Maze)
         HBox footer = new HBox();
@@ -227,7 +227,7 @@ public abstract class GUI extends Application
                 }
 
                 tm.draw();
-                alg.draw(mazeCanvas.getGraphicsContext2D());
+                alg.draw();
             }
         };
         timer.start();

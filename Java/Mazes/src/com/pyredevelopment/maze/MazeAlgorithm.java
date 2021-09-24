@@ -6,14 +6,24 @@ import javafx.scene.canvas.GraphicsContext;
 
 import java.io.File;
 
-public abstract class Algorithm
+public abstract class MazeAlgorithm
 {
 
+    // This is the current step of the algorithm we are on
+    protected int currentStep;
+
+    // The maze object that the algorithm is working with
     protected MazeStructure maze;
+
+    // The primary canvas the maze is being visualized on to
+    protected Canvas canvas;
 
     // - - - - - - - - - - File Storage / IO - - - - - - - - - -
 
-    // Allows you to save the maze file that the algorithm is working with
+    /**
+     * This allows you to save the mazeStructure that the algorithm is currently working on
+     * @param file The file you want the maze saved to
+     */
     public void saveMaze(File file)
     {
         // Save the current canvas
@@ -29,8 +39,24 @@ public abstract class Algorithm
         maze.setCanvas(savedCanvas);
     }
 
-    // Allows you to load a maze specific maze into the algorithm
-    public abstract void loadMaze(MazeStructure m);
+    /**
+     * This allows you to load a maze structure onto the current canvas
+     * @param maze The maze you wanted loaded in
+     */
+    public void loadMaze(MazeStructure maze)
+    {
+        // Reset to step 0
+        currentStep = 0;
+
+        // If provided, unpack the provided maze as well
+        this.maze = maze;
+
+        // Reset the canvas after serializations
+        this.maze.setCanvas(canvas);
+
+        // Set the canvas to be redrawn to be affected by update
+        this.maze.setRedrawFlag(true);
+    }
 
     // - - - - - - - - - - Algorithm Related Methods - - - - - - - - - -
 
@@ -43,9 +69,9 @@ public abstract class Algorithm
     // - - - - - - - - - -
 
     // Draws a visual representation of the algorithm
-    public void draw(GraphicsContext gc)
+    public void draw()
     {
         // Draw the maze!
-        maze.draw(gc);
+        maze.draw(canvas.getGraphicsContext2D());
     }
 }

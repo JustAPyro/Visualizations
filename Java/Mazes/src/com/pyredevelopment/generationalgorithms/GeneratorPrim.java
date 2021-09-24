@@ -1,14 +1,11 @@
 package com.pyredevelopment.generationalgorithms;
 
-import com.pyredevelopment.cutility.CUtility;
 import com.pyredevelopment.graphical.TextManager;
-import com.pyredevelopment.maze.Algorithm;
+import com.pyredevelopment.maze.MazeAlgorithm;
 import com.pyredevelopment.maze.MazeStructure;
 import com.pyredevelopment.maze.Wall;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -31,12 +28,9 @@ Objective: Creating a easily understandable visualization of Prim's Maze generat
 You can find a write up of the original plans for the project here:
 https://docs.google.com/document/d/10b-LSSGvkl0g05j54R10NhtFlJdlgE82eGOzjwQn1sg/edit?usp=sharing
  */
-public class PrimGenerator extends Algorithm
+public class GeneratorPrim extends MazeAlgorithm
 {
 
-    private final Canvas canvas;          // The canvas the com.pyredevelopment.generationalgorithms.PrimGenerator works on primarily
-    private final GraphicsContext gc;     // The graphics context that is mainly used
-    private int currentStep = 0;    // Represents the current step of the algorithm
     private final TextManager tm;         // The text manager that will draw text associated with algorithm
     final ArrayList<Wall> saved;          // List of saved walls
     int selectedIndex = 0;          // Working index to track
@@ -47,14 +41,14 @@ public class PrimGenerator extends Algorithm
      * @param canvas Requires the canvas you wish it to be drawn/animated on
      * @param tm The text manager you would like updated with canvas
      */
-    public PrimGenerator(Canvas canvas, TextManager tm)
+    public GeneratorPrim(Canvas canvas, TextManager tm)
     {
+
+        currentStep = 0;
+
         // Save the provided parameters
         this.canvas = canvas;
         this.tm = tm;
-
-        // Calculate additional necessary parameters on creation so we don't have to do it later
-        gc = canvas.getGraphicsContext2D();
 
         // Since no com.pyredevelopment.maze.MazeStructure was offered in this constructor, we create a new one
         // TODO: This is broken for non-square mazes
@@ -76,23 +70,6 @@ public class PrimGenerator extends Algorithm
 
         maze.setCanvas(null);
         return maze;
-    }
-
-
-
-    public void loadMaze(MazeStructure m)
-    {
-        // Reset to step 0
-        currentStep = 0;
-
-        // If provided, unpack the provided maze as well
-        maze = m;
-
-        // Reset the canvas after serializations
-        maze.setCanvas(canvas);
-
-        // Set the canvas to be redrawn to be affected by update
-        maze.setRedrawFlag(true);
     }
 
     /**
