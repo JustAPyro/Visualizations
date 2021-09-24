@@ -37,12 +37,20 @@ public abstract class GUI extends Application
     protected String headerString;
     protected String goalString;
     protected MazeAlgorithm alg;
+    protected TextManager tm;
+    protected Canvas mazeCanvas;
+    protected Canvas textCanvas;
 
-    private TextManager tm;                 // This is what will be handling updating the text
 
     private boolean completeFlag = false;   // If this is set to true the GUI will continue calling step until finished
     private boolean stepFlag = false;       // Indicates step to be taken on next draw
 
+
+    public void init()
+    {
+        mazeCanvas = new ResizableCanvas();
+        textCanvas = new ResizableCanvas();
+    }
 
     /**
      * This is entered when the application is launched
@@ -104,29 +112,14 @@ public abstract class GUI extends Application
         });
         header.getChildren().add(skipButton);
 
-        // Create and add canvas to an BOX then root
-        Canvas mazeCanvas = new ResizableCanvas();
+        // Add the maze canvas to the root
         VBox.setVgrow(mazeCanvas, Priority.ALWAYS);
         root.getChildren().add(mazeCanvas);
 
         // Create and add text canvas to root
-        Canvas textCanvas = new ResizableCanvas();
         GraphicsContext tgc = textCanvas.getGraphicsContext2D();
         textCanvas.resize(0, 175);
         root.getChildren().add(textCanvas);
-
-        // Create a text manager and attach it to textCanvas
-        tm = new TextManager(textCanvas);
-        tm.addText(1, 0, "1. Start with a grid full of walls");
-        tm.addText(0, 0, "2. Pick a cell, mark it as part of the maze. Add the walls of the cell to the wall list.");
-        tm.addText(0, 0, "3. While there are walls in the list:");
-        tm.addText(0, 1, "1. Pick a random wall from the list. If only one of the two cells that the wall divides is visited, then:");
-        tm.addText(0, 2, "1. Make the wall a passage and mark the unvisited cell as part of the maze");
-        tm.addText(0, 2, "2. Add the neighboring walls of the cell to the wall list.");
-        tm.addText(0, 1, "2. Remove the wall from the list");
-
-        // Then create a Prim generator and attach it to mazeCanvas
-        alg = new GeneratorPrim(mazeCanvas, tm);
 
         // Create footer containing (myInfo      Save Maze, Load Maze)
         HBox footer = new HBox();
