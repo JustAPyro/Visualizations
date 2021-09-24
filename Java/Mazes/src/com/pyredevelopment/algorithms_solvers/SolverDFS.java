@@ -3,7 +3,11 @@ package com.pyredevelopment.algorithms_solvers;
 import com.pyredevelopment.algorithms_generators.GeneratorPrim;
 import com.pyredevelopment.graphical.TextManager;
 import com.pyredevelopment.maze.MazeAlgorithm;
+import com.pyredevelopment.maze.Wall;
+import com.sun.javafx.scene.traversal.Direction;
 import javafx.scene.canvas.Canvas;
+
+import java.util.ArrayList;
 
 /**
  * This class represents the algorithmic and procedural method of solving a maze using a Depth First Search
@@ -25,12 +29,19 @@ public class SolverDFS extends MazeAlgorithm
         this.tm = tm;
 
         maze = GeneratorPrim.getRandomMaze(8, 8, canvas);
+
+
+
+        // We'll start in the top left
+        maze.setMarker(0, 0);
+        maze.colorCell(0, 0);
     }
 
     @Override
     public void newMazeButton()
     {
         maze = GeneratorPrim.getRandomMaze(8, 8, canvas);
+        currentStep = 0;
     }
 
     @Override
@@ -42,6 +53,10 @@ public class SolverDFS extends MazeAlgorithm
     @Override
     public boolean nextStep()
     {
+        ArrayList<Direction> directionsOpen = maze.getOpenCellsFrom(0, 0);
+        System.out.println(directionsOpen.size());
+        if (directionsOpen.size() == 1)
+            maze.moveMarker(directionsOpen.get(0));
         return false;
     }
 }

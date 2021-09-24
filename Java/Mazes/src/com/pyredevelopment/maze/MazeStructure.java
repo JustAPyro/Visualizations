@@ -1,6 +1,7 @@
 package com.pyredevelopment.maze;
 
 import com.pyredevelopment.cutility.CUtility;
+import com.sun.javafx.scene.traversal.Direction;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -44,6 +45,8 @@ public class MazeStructure implements Serializable
     final int[][] hWalls;     // Represents horizontal maze walls
     final int[][] vWalls;     // Represents vertical maze walls
     final int[][] cells;    // Represents all maze cell status
+
+    Wall marker;
 
 
 
@@ -152,6 +155,8 @@ public class MazeStructure implements Serializable
                     gc.setFill(Color.LIGHTGRAY);
                 else if (cells[x][y] == 1)
                     gc.setFill(Color.WHITE);
+                else if (cells[x][y] == 2)
+                    gc.setFill(Color.LIGHTGREEN);
                 gc.fillRect(cellWidth*x+originX, cellHeight*y+originY, cellWidth, cellHeight);
 
             }
@@ -197,8 +202,27 @@ public class MazeStructure implements Serializable
             }
         }
 
+        if (marker != null)
+        {
+            gc.save();
+            gc.setFill(Color.BLACK);
+            gc.fillOval(cellWidth*marker.getX()+originX+cellWidth/4, cellHeight*marker.getY()+originY+cellHeight/4, cellWidth/2, cellHeight/2);
+            gc.restore();
+        }
+
         redrawFlag = false;
 
+    }
+
+    public void setMarker(int x, int y)
+    {
+        marker = new Wall('c', x, y);
+    }
+
+    public void colorCell(int x, int y)
+    {
+        cells[x][y] = 2;
+        redrawFlag = true;
     }
 
     public static MazeStructure loadMaze(File file)
@@ -363,6 +387,20 @@ public class MazeStructure implements Serializable
 
     }
 
+    public ArrayList<Direction> getOpenCellsFrom(int y, int x)
+    {
+        ArrayList<Direction> open = new ArrayList<Direction>();
+        if (y > 0 && hWalls[x][y-1] == -1)
+            open.add(Direction.UP);
+        if (hWalls[x][y] == -1)
+            open.add(Direction.DOWN);
+        if (x > 0 && vWalls[x-1][y] == -1)
+            open.add(Direction.LEFT);
+        if (vWalls[x][y] == -1)
+            open.add(Direction.RIGHT);
+        return open;
+    }
+
     /**
      * Colors a single wall passed in
      * @param w The wall you would like coloreds
@@ -397,4 +435,28 @@ public class MazeStructure implements Serializable
 
     }
 
+    public void moveMarker(Direction direction)
+    {
+
+        int x = marker.getX();
+        int y = marker.getY();
+
+        if (direction == Direction.DOWN)
+        {
+            setMarker(x, y + 1);
+        }
+        if (direction == Direction.RIGHT)
+        {
+            setMarker(x+1, y);
+        }
+        if (direction == Direction.LEFT)
+        {
+            setMarker(x-1, y);
+        }
+        if (direction == Direction.UP)
+        {
+            setMarker(x, y-1);
+        }
+        redrawFlag = true;
+    }
 }
