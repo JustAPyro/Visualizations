@@ -43,6 +43,7 @@ public class SolverDFS extends MazeAlgorithm
         //int VISITED = maze.colorCell();
 
         maze.colorCell(0, 0, VISITED);
+        maze.setRedrawFlag(true);
     }
 
     @Override

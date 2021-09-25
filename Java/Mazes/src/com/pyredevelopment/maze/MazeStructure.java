@@ -502,6 +502,7 @@ public class MazeStructure implements Serializable
 
     public ArrayList<Direction> getOpenCellsFrom(int y, int x)
     {
+        System.out.println("Down :  " + hWalls[x][y] + " | Right : " + vWalls[x][y]);
         ArrayList<Direction> open = new ArrayList<Direction>();
         if (y > 0 && hWalls[x][y-1] == -1)
             open.add(Direction.UP);
@@ -550,8 +551,8 @@ public class MazeStructure implements Serializable
 
     public ArrayList<Direction> getMarkerChoices()
     {
-
-        return getOpenCellsFrom(marker.x, marker.y);
+        // TODO: SHoudl these really be indexed like this? Rewrite marker, move logic to SolverDFS
+        return getOpenCellsFrom(marker.y, marker.x);
     }
 
     public void moveMarker(Direction direction)
