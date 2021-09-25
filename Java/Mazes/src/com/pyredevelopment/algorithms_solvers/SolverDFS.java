@@ -32,6 +32,8 @@ public class SolverDFS extends MazeAlgorithm
     // Starting our decision stack with ASCII(65) or A
     private int startASCII = 65;
 
+    boolean labeledDecision = false;
+
     private final Color VISITED = Color.LIGHTBLUE;
 
     /**
@@ -102,6 +104,20 @@ public class SolverDFS extends MazeAlgorithm
         }
 
         // Otherwise, we have decision (Oh boy!) - Start by labeling each decision
+
+        if (labeledDecision)
+        {
+            // Move the first move (Which should be the same as top of the stack)
+            moveAI(open.get(0));
+
+            // Set labeledDecision to false to indicate that the next decision is no longer labeled
+            labeledDecision = false;
+
+            // Return false to end turn
+            return false;
+        }
+
+        // For each possible direction
         for (Direction d : open)
         {
             // Get the new position if we move that way
@@ -115,8 +131,12 @@ public class SolverDFS extends MazeAlgorithm
 
             // Add the label to the stack so we can see
             search.add(c);
-
         }
+
+        // set labeled decision to true so we know that this decision has been labeled
+        labeledDecision = true;
+
+
 
         return false;
 
@@ -179,6 +199,8 @@ public class SolverDFS extends MazeAlgorithm
             case LEFT:  positionAI[0]--; break;
             case RIGHT: positionAI[0]++; break;
         }
+
+
 
         // Add the move to the list of move's we've made
         lastMoves.add(dir);
