@@ -2,9 +2,12 @@ package com.pyredevelopment.maze;
 
 import com.pyredevelopment.cutility.CUtility;
 import com.sun.javafx.scene.traversal.Direction;
+import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 
 import java.io.File;
 import java.io.Serializable;
@@ -41,6 +44,9 @@ public class MazeStructure implements Serializable
 
     // RedrawFlag indicates if the com.pyredevelopment.graphical.GUI needs to be refreshed
     boolean redrawFlag = true;
+
+    // Lists any character labels you would like drawn on the maze
+    private ArrayList<int[]> characterLabels = new ArrayList<>();
 
     private Canvas canvas;
 
@@ -206,7 +212,6 @@ public class MazeStructure implements Serializable
         }
     }
 
-    // - ---------------------------------------------------------
     // - - - - - - - - - - - AI Related stuff! - - - - - - - - - -
 
     public void setPositionAI(int[] position)
@@ -233,6 +238,12 @@ public class MazeStructure implements Serializable
         return open;
     }
 
+    //----------------------------------------
+    public void labelChar(int x, int y, char c)
+    {
+        characterLabels.add(new int[] {x, y, (int) c});
+        redrawFlag = true;
+    }
 
     /**
      * This draws the maze structure graphically using whatever graphics context is provided
@@ -334,7 +345,17 @@ public class MazeStructure implements Serializable
             }
         }
 
+        for (int[] label : characterLabels)
+        {
 
+            char character = (char) label[2];
+            gc.setFont(new Font("ARIEL", 50));
+            gc.setFill(Color.BLACK);
+
+            // Set the text to draw center label
+            gc.setTextAlign(TextAlignment.CENTER); gc.setTextBaseline(VPos.CENTER);
+            gc.fillText(String.valueOf(character), cellWidth*label[0]+originX + (cellWidth/2), cellHeight*label[1]+originY + (cellHeight/2));
+        }
 
         if (positionAI != null)
         {

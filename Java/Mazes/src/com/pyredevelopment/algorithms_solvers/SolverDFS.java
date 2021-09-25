@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
+import java.util.Stack;
 
 import static javafx.scene.AccessibleAttribute.VISITED;
 
@@ -28,6 +29,9 @@ public class SolverDFS extends MazeAlgorithm
     // List of cell's we've visited / moves we've made
     ArrayList<int[]> visitedCells;
     ArrayList<Direction> lastMoves;
+
+    // Decision Stack!
+    Stack<Character> search;
 
     private final Color VISITED = Color.LIGHTBLUE;
 
@@ -59,6 +63,8 @@ public class SolverDFS extends MazeAlgorithm
         // Pass the AI's position matrix into the maze for it to be drawn
         maze.setPositionAI(positionAI);
 
+        maze.labelChar(2, 2, 'H');
+
     }
 
     @Override
@@ -88,13 +94,21 @@ public class SolverDFS extends MazeAlgorithm
             open.remove(opposite(lastMove));
         }
 
-        // If there's only one direction, let's move in that direction
+        // If there's only one direction
         if (open.size() == 1)
+        {
+            // Move in that direction and end step
             moveAI(open.get(0));
+            return false;
+        }
+
+        // Otherwise, we have decision (Oh boy!) - Start by labeling each decision
+        maze.labelChar(2, 2, 'A');
 
 
 
         return false;
+
     }
 
     /**
