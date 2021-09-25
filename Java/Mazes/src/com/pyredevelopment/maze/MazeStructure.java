@@ -41,8 +41,8 @@ public class MazeStructure implements Serializable
 
     private Canvas canvas;
 
-    final int[][] hWalls;     // Represents horizontal maze walls
-    final int[][] vWalls;     // Represents vertical maze walls
+    public int[][] hWalls;     // Represents horizontal maze walls
+    public int[][] vWalls;     // Represents vertical maze walls
     int[][] cells;    // Represents all maze cell status
 
     Wall marker;
@@ -78,16 +78,12 @@ public class MazeStructure implements Serializable
     {
 
 
-        colors.put(0, Color.LIGHTGRAY);
-        colors.put(1, Color.WHITE);
-        colors.put(2, Color.LIGHTGREEN);
-
         // Save the canvas
         this.canvas = canvas;
 
         // Initialize data storage arrays
+        vWalls = new int[x-1][y];
         hWalls = new int[x][y-1];
-        vWalls = new int[y-1][x];
         cells = new int[x][y];
 
         // Save width and height
@@ -153,14 +149,39 @@ public class MazeStructure implements Serializable
 
     }
 
+
+
     private void colorWall(Wall w, int key)
     {
+        System.out.println(vWalls[1][2]);
         switch (w.o)
         {
             case 'h':
+                System.out.println(vWalls[1][2]);
                 hWalls[w.x][w.y] = key;
+                break;
             case 'v':
                 vWalls[w.x][w.y] = key;
+                break;
+        }
+        System.out.println(vWalls[1][2]);
+        redrawFlag = true;
+    }
+
+    public void colorAllWalls(Color color)
+    {
+        int key = getColorKey(color);
+
+        for (int row = 0; row < hWalls.length; row++) {
+            for (int col = 0; col < hWalls[row].length; col++) {
+                hWalls[row][col] = key;
+            }
+        }
+
+        for (int row = 0; row < vWalls.length; row++) {
+            for (int col = 0; col < vWalls[row].length; col++) {
+                vWalls[row][col] = key;
+            }
         }
     }
 
@@ -214,10 +235,10 @@ public class MazeStructure implements Serializable
         // items, so it should be okay for this application
 
 
-        for (int rows = 0; rows < height; rows++) {
-            for (int col = 0; col < width; col++) {
+        for (int rows = 0; rows < cells.length; rows++) {
+            for (int col = 0; col < cells[rows].length; col++) {
                 gc.setFill(colors.get(cells[rows][col]));
-                gc.fillRect(cellWidth*col+originX, cellHeight*rows+originY, cellWidth, cellHeight);
+                gc.fillRect(cellWidth*rows+originX, cellHeight*col+originY, cellWidth, cellHeight);
 
             }
         }
@@ -225,44 +246,48 @@ public class MazeStructure implements Serializable
 
 
         // Start by drawing the VERTICAL LINES
-        for (int y = 0; y < width; y++) {
-            for (int x = 0; x < height - 1; x++) {
-                if (vWalls[x][y] == 0)
-                    gc.setStroke(Color.DARKGREY);
-                else if (vWalls[x][y] == 10)
-                    gc.setStroke(Color.ORANGE);
-                else if (vWalls[x][y] == 11)
-                    gc.setStroke(Color.RED);
-                else if (vWalls[x][y] == 13)
-                    gc.setStroke(Color.BLACK);
-                else if (vWalls[x][y] == -1)
+        for (int row = 0; row < vWalls.length; row++) {
+            for (int col = 0; col < vWalls[row].length; col++) {
+
+                // If the wall doesn't exist just continue and don't draw it
+                if (vWalls[row][col] == -1)
                     continue;
 
-                gc.strokeLine((x+1)*cellWidth+originX, (y)*cellHeight+originY,
-                        (x+1)*cellWidth+originX, (y+1)*cellHeight+originY);
+                // Otherwise use the key of the tile to set the color
+                gc.setStroke(colors.get(vWalls[row][col]));
+                if (gc.getStroke() == Color.PURPLE)
+                    System.out.println("Row: " + row + " and col" + col);
+
+                if (gc.getStroke() == Color.PURPLE)
+                    System.out.println(row + ", " +col);
+
+                // And then draw the lines
+                gc.strokeLine((row+1)*cellWidth+originX, (col)*cellHeight+originY,
+                        (row+1)*cellWidth+originX, (col+1)*cellHeight+originY);
 
             }
         }
+
 
         // then draw the HORIZONTAL LINES
-        for (int y = 0; y < height - 1; y++) {
-            for (int x = 0; x < width; x++) {
-                if (hWalls[x][y] == 0)
-                    gc.setStroke(Color.DARKGREY);
-                else if (hWalls[x][y] == 10)
-                    gc.setStroke(Color.ORANGE);
-                else if (hWalls[x][y] == 11)
-                    gc.setStroke(Color.RED);
-                else if (hWalls[x][y] == 13)
-                    gc.setStroke(Color.BLACK);
-                else if (hWalls[x][y] == -1)
+        for (int row = 0; row < hWalls.length; row++) {
+            for (int col = 0; col < hWalls[row].length; col++) {
+
+                // If the wall is negative just don't draw it
+                if (hWalls[row][col] == -1)
                     continue;
 
-                gc.strokeLine((x)*cellWidth+originX, (y+1)*cellHeight+originY,
-                        (x+1)*cellWidth+originX, (y+1)*cellHeight+originY);
+                // Otherwise use the key to get color
+                gc.setStroke(colors.get(hWalls[row][col]));
+
+                // Then draw the line
+                gc.strokeLine((row)*cellWidth+originX, (col+1)*cellHeight+originY,
+                        (row+1)*cellWidth+originX, (col+1)*cellHeight+originY);
 
             }
         }
+
+
 
         if (marker != null)
         {
@@ -338,6 +363,7 @@ public class MazeStructure implements Serializable
     public ArrayList<Wall> getSurroundingWalls(int x, int y)
     {
         //TODO: Make sure that this won't IndexOutOfBoundsException
+        //TODO: FIX THE WEIRD H AXIS BEING SWITCHED HERE
 
         // Create an arraylist to return
         ArrayList<Wall> ret = new ArrayList<>();
@@ -520,5 +546,17 @@ public class MazeStructure implements Serializable
             setMarker(x, y-1);
         }
         redrawFlag = true;
+    }
+
+    public void print(int[][] arr)
+    {
+        for (int row = 0; row < arr.length; row++)
+        {
+            for (int col = 0; col < arr[row].length; col++)
+            {
+                System.out.print(arr[row][col]);
+            }
+            System.out.println();
+        }
     }
 }

@@ -36,6 +36,7 @@ public class GeneratorPrim extends MazeAlgorithm
     Color       IN_MAZE = Color.WHITE;
     Color    WALL_SAVED = Color.ORANGE;
     Color WALL_SELECTED = Color.RED;
+    Color   WALL_NORMAL = Color.DARKGREY;
 
     final ArrayList<Wall> saved;          // List of saved walls
     int selectedIndex = 0;          // Working index to track
@@ -66,8 +67,9 @@ public class GeneratorPrim extends MazeAlgorithm
 
         // Since no com.pyredevelopment.maze.MazeStructure was offered in this constructor, we create a new one
         // TODO: This is broken for non-square mazes
-        maze = new MazeStructure(8, 8, canvas);
+        maze = new MazeStructure(10, 8, canvas);
         maze.colorAllCells(NOT_IN_MAZE);
+        maze.colorAllWalls(WALL_NORMAL);
 
         // Initialized the walls array
         saved = new ArrayList<>();
@@ -115,6 +117,7 @@ public class GeneratorPrim extends MazeAlgorithm
             // Create a random generator
             Random rnd = new Random();
 
+
             // Then we pick a random cell, mark it as part of the maze, and adds walls to the list
             int rx = rnd.nextInt(8); int ry = rnd.nextInt(8);
 
@@ -124,14 +127,18 @@ public class GeneratorPrim extends MazeAlgorithm
             // Get the surrounding walls
             ArrayList<Wall> surround = maze.getSurroundingWalls(rx, ry);
 
-            // Color the provided walls in orange
-            maze.colorWall(surround, 11);
+
+
+
+
+            maze.colorWall(surround, WALL_SAVED);
+
 
             // Save them to the list
             saved.addAll(surround);
 
             // Select the next row of text
-            tm.selectText(1);
+           tm.selectText(1);
 
             currentStep++;
 
@@ -154,13 +161,13 @@ public class GeneratorPrim extends MazeAlgorithm
             selectedIndex = rnd.nextInt(saved.size());
 
             // Color the wall to indicate it's been picked
-            maze.colorWall(saved.get(selectedIndex), 11, false);
+            maze.colorWall(saved.get(selectedIndex), WALL_SELECTED);
 
             // Get the value of the two cells
             Wall[] cells = maze.getCells(saved.get(selectedIndex));
 
-            // If ONLY (XOR) one of the cells has been visited, then:
-            if (maze.getValue(cells[0]) == 1 ^ maze.getValue(cells[1]) == 1)
+            // If ONLY (XOR) one of the cells has been visited ( in the maze ), then:
+            if (maze.getValue(cells[0]) == maze.getColorKey(IN_MAZE) ^ maze.getValue(cells[1]) == maze.getColorKey(IN_MAZE))
             {
                 tm.updateText(3, "1. Pick a random wall from the list. If only one of the two cells that the wall divides is visited, then: (True)");
 
@@ -179,16 +186,16 @@ public class GeneratorPrim extends MazeAlgorithm
             tm.selectText(4);
 
             Wall[] cells = maze.getCells(saved.get(selectedIndex));
-            if (maze.getValue(cells[0]) == 1 ^ maze.getValue(cells[1]) == 1)
+            if (maze.getValue(cells[0]) == maze.getColorKey(IN_MAZE) ^ maze.getValue(cells[1]) == maze.getColorKey(IN_MAZE))
             {
-                if (maze.getValue(cells[0]) == 1)
+                if (maze.getValue(cells[0]) == maze.getColorKey(IN_MAZE))
                 {
-                    maze.addToMaze(cells[1].getX(), cells[1].getY());
+                    maze.colorCell(cells[1].getX(), cells[1].getY(), IN_MAZE);
                     workingWall = cells[1];
                 }
                 else
                 {
-                    maze.addToMaze(cells[0].getX(), cells[0].getY());
+                    maze.colorCell(cells[0].getX(), cells[0].getY(), IN_MAZE);
                     workingWall = cells[0];
                 }
 
@@ -210,7 +217,7 @@ public class GeneratorPrim extends MazeAlgorithm
             }
 
             // Color the provided walls in orange
-            maze.colorWall(surround, 10);
+            maze.colorWall(surround, WALL_SAVED);
             saved.addAll(surround);
 
             tm.selectText(5);

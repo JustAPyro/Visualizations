@@ -33,6 +33,8 @@ public class Maze
         return cells[x-1][y-1];
     }
 
+
+
     public static void main(String[] args)
     {
         Maze m = new Maze(4, 2);

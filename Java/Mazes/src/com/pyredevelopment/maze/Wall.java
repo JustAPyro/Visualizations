@@ -45,4 +45,9 @@ public class Wall implements Serializable
         return y;
     }
 
+    public String toString()
+    {
+        return o + " (" + x + ", " + y + ")";
+    }
+
 }

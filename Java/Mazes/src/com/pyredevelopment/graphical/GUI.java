@@ -237,7 +237,7 @@ public abstract class GUI extends Application
                 }
 
                 // Draw the text manager
-                tm.draw();
+                 tm.draw();
 
                 // Draw the algorithm
                 alg.draw();
