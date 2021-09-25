@@ -112,103 +112,180 @@ public class MazeStructure implements Serializable
 
     // - - - - - - - - - - Color Method Stuff - - - - - - - - - -
 
-    public int setColor(Color color)
-    {
-        // Warning! Do something for error handling here
-        int key = colors.size();
-        colors.put(key, color);
-        return key;
-    }
-
+    /**
+     * Gets the key for whatever color is passed in-
+     * If there is no key for that color, a new one will be created and returned
+     * @param color The color of which you'd like the key
+     * @return The key of the passed in color
+     */
     public Integer getColorKey(Color color)
     {
+        // Declare the return value
         Integer key;
+
+        // If colors doesn't contain key
+        if (!colors.containsValue(color))
+        {
+            // Declare key as the next integer value available
+            key = colors.size();
+
+            // Insert the new color with new key
+            colors.put(key, color);
+
+            // Return key
+            return key;
+        }
+
+        // Otherwise, we have to search the hashmap for the key, so for each entry
         for (Map.Entry<Integer, Color> entry : colors.entrySet())
         {
+            // Check the value, and if it equals color
             if (entry.getValue().equals(color))
             {
+                // Return the key
                 return entry.getKey();
             }
         }
 
-        key = colors.size();
-        colors.put(key, color);
-        return key;
+        throw new RuntimeException("Something went terribly wrong with the KeyColor hashmap!");
+
     }
 
+    /**
+     * Colors all cells in the maze the provided color
+     * @param color The color you'd like the maze filled with
+     */
     public void colorAllCells(Color color)
     {
+        // Get the key for the color (Or create it if it doesn't exist)
         Integer key = getColorKey(color);
+
+        // Then for each row and column
         for (int row = 0; row < cells.length; row++)
             for (int col = 0; col < cells[row].length; col++)
             {
+                // Tag the cell with the correct color key
                 cells[row][col] = key;
             }
     }
 
+    /**
+     * This will color all walls the provided color
+     * @param color The color you would like to set all walls to
+     */
+    public void colorAllWalls(Color color)
+    {
+        // get the key (or create if necessary) for the provided color
+        int key = getColorKey(color);
+
+        // For each horizontal wall
+        for (int row = 0; row < hWalls.length; row++)
+        {
+            for (int col = 0; col < hWalls[row].length; col++)
+            {
+                // Set to be equal to the new key
+                hWalls[row][col] = key;
+            }
+        }
+
+        // For each vertical wall
+        for (int row = 0; row < vWalls.length; row++)
+        {
+            for (int col = 0; col < vWalls[row].length; col++)
+            {
+                // Set to be equal to the new key
+                vWalls[row][col] = key;
+            }
+        }
+    }
+
+    /**
+     * Colors the provided cell the given color based on key
+     * Overloaded colorCell(int, int, int)
+     *
+     * @param x value of the cell
+     * @param y value of the cell
+     * @param key key for the desired color
+     */
     public void colorCell(int x, int y, int key)
     {
+        // Set the cell to desired key, since we have it already
         cells[x][y] = key;
     }
 
+    /**
+     * Colors the provided cell the given color
+     * Overloaded colorCell(int int Color)
+     *
+     * @param x value of the cell
+     * @param y value of the cell
+     * @param color desired color
+     */
     public void colorCell(int x, int y, Color color)
     {
         cells[x][y] = getColorKey(color);
     }
 
+    /**
+     * Colors the provided cell the given color
+     * Overloaded colorCell(int[] Color)
+     *
+     * @param cell 2 element array containing x, y for the cell
+     * @param color The color you would like it filled
+     */
     public void colorCell(int[] cell, Color color)
     {
         cells[cell[0]][cell[1]] = getColorKey(color);
     }
 
-    public void colorWall(ArrayList<Wall> walls, Color color)
+    /**
+     * Colors the provided wall with the key given
+     * @param w The wall you'd like colored
+     * @param key The key of the desired color
+     */
+    private void colorWall(Wall w, int key)
     {
-        int key = getColorKey(color);
-        for (Wall w : walls)
+        // Switch to determine if it's a hWall or vWall
+        switch (w.o)
         {
-            colorWall(w, key);
+            // Assign the key to the correct corresponding wall and then break
+            case 'h': hWalls[w.x][w.y] = key; break;
+            case 'v': vWalls[w.x][w.y] = key; break;
         }
+        // Request the maze to be redrawn
+        redrawFlag = true;
     }
 
+    /**
+     * Colors the wall the provided color
+     * @param w The wall you'd like colored
+     * @param color The desired color
+     */
     public void colorWall(Wall w, Color color)
     {
+        // Get the keyColor or create one if necessary
         int key = getColorKey(color);
+
+        // Call the colorWall function, passing the wall and key
         colorWall(w, key);
 
     }
 
-
-    private void colorWall(Wall w, int key)
+    /**
+     * Colors an entire ArrayList of walls a given color
+     * @param walls ArrayList of walls you'd like colored
+     * @param color The desired color
+     */
+    public void colorWall(ArrayList<Wall> walls, Color color)
     {
-        System.out.println(vWalls[1][2]);
-        switch (w.o)
-        {
-            case 'h':
-                System.out.println(vWalls[1][2]);
-                hWalls[w.x][w.y] = key;
-                break;
-            case 'v':
-                vWalls[w.x][w.y] = key;
-                break;
-        }
-        System.out.println(vWalls[1][2]);
-        redrawFlag = true;
-    }
-
-    public void colorAllWalls(Color color)
-    {
+        // Start by getting the color key (or creating it if it doesn't exist)
         int key = getColorKey(color);
 
-        for (int row = 0; row < hWalls.length; row++) {
-            for (int col = 0; col < hWalls[row].length; col++) {
-                hWalls[row][col] = key;
-            }
-        }
-
-        for (int row = 0; row < vWalls.length; row++) {
-            for (int col = 0; col < vWalls[row].length; col++) {
-                vWalls[row][col] = key;
-            }
+        // Then for each wall
+        for (Wall w : walls)
+        {
+            // Call the colorWall function, passing in the wall and the key
+            colorWall(w, key);
         }
     }
 
@@ -315,11 +392,6 @@ public class MazeStructure implements Serializable
 
                 // Otherwise use the key of the tile to set the color
                 gc.setStroke(colors.get(vWalls[row][col]));
-                if (gc.getStroke() == Color.PURPLE)
-                    System.out.println("Row: " + row + " and col" + col);
-
-                if (gc.getStroke() == Color.PURPLE)
-                    System.out.println(row + ", " +col);
 
                 // And then draw the lines
                 gc.strokeLine((row+1)*cellWidth+originX, (col)*cellHeight+originY,
@@ -558,7 +630,6 @@ public class MazeStructure implements Serializable
 
     public ArrayList<Direction> getOpenCellsFrom(int y, int x)
     {
-        System.out.println("Down :  " + hWalls[x][y] + " | Right : " + vWalls[x][y]);
         ArrayList<Direction> open = new ArrayList<Direction>();
         if (y > 0 && hWalls[x][y-1] == -1)
             open.add(Direction.UP);

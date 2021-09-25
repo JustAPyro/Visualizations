@@ -283,10 +283,8 @@ public class GeneratorPrim extends MazeAlgorithm
                 surroundingWalls.remove(wall);
                 for (int i = 0; i < surroundingWalls.size(); i++)
                 {
-                    System.out.println(surroundingWalls.get(i) + " vs " + wall);
                     if (surroundingWalls.get(i).equals(wall))
                     {
-                        System.out.println("Removed!");
                         surroundingWalls.remove(i);
                     }
                 }
