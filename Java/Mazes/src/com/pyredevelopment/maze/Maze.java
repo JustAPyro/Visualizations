@@ -7,6 +7,8 @@ public class Maze
     private int[][] hWalls;
     private int[][] cells;
 
+
+
     public Maze(int x, int y)
     {
         if (x < 1 || y < 1)

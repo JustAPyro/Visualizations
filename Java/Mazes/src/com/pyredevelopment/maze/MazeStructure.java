@@ -22,6 +22,9 @@ import static java.lang.Math.min;
 public class MazeStructure implements Serializable
 {
 
+    // This is the position of an AI if one is provided
+    private int[] positionAI = null;
+
     // Set default origin point to 0, 0
     double originX = 0;
     double originY = 0;
@@ -147,6 +150,11 @@ public class MazeStructure implements Serializable
         cells[x][y] = getColorKey(color);
     }
 
+    public void colorCell(int[] cell, Color color)
+    {
+        cells[cell[0]][cell[1]] = getColorKey(color);
+    }
+
     public void colorWall(ArrayList<Wall> walls, Color color)
     {
         int key = getColorKey(color);
@@ -162,7 +170,6 @@ public class MazeStructure implements Serializable
         colorWall(w, key);
 
     }
-
 
 
     private void colorWall(Wall w, int key)
@@ -200,6 +207,32 @@ public class MazeStructure implements Serializable
     }
 
     // - ---------------------------------------------------------
+    // - - - - - - - - - - - AI Related stuff! - - - - - - - - - -
+
+    public void setPositionAI(int[] position)
+    {
+        positionAI = position;
+    }
+
+    public ArrayList<Direction> getOpenDirections(int[] position)
+    {
+        // Create an array to store the open directions
+        ArrayList<Direction> open = new ArrayList<Direction>();
+
+        // Check each wall around provided position and add that direction if possible
+        if (position[1] > 0 && hWalls[position[0]][position[1]-1] == -1)
+            open.add(Direction.UP);
+        if (hWalls[position[0]][position[1]] == -1)
+            open.add(Direction.DOWN);
+        if (position[0] > 0 && vWalls[position[0]-1][position[1]] == -1)
+            open.add(Direction.LEFT);
+        if (vWalls[position[0]][position[1]] == -1)
+            open.add(Direction.RIGHT);
+
+        // Return possible directions
+        return open;
+    }
+
 
     /**
      * This draws the maze structure graphically using whatever graphics context is provided
@@ -303,11 +336,11 @@ public class MazeStructure implements Serializable
 
 
 
-        if (marker != null)
+        if (positionAI != null)
         {
             gc.save();
             gc.setFill(Color.BLACK);
-            gc.fillOval(cellWidth*marker.getX()+originX+cellWidth/4, cellHeight*marker.getY()+originY+cellHeight/4, cellWidth/2, cellHeight/2);
+            gc.fillOval(cellWidth*positionAI[0]+originX+cellWidth/4, cellHeight*positionAI[1]+originY+cellHeight/4, cellWidth/2, cellHeight/2);
             gc.restore();
         }
 

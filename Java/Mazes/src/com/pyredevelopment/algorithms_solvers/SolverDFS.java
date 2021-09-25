@@ -8,6 +8,7 @@ import com.sun.javafx.scene.traversal.Direction;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 
+import java.io.InvalidObjectException;
 import java.util.ArrayList;
 
 import static javafx.scene.AccessibleAttribute.VISITED;
@@ -20,6 +21,16 @@ import static javafx.scene.AccessibleAttribute.VISITED;
  */
 public class SolverDFS extends MazeAlgorithm
 {
+
+    // Position of our AI
+    int[] positionAI;
+
+    // List of cell's we've visited / moves we've made
+    ArrayList<int[]> visitedCells;
+    ArrayList<Direction> lastMoves;
+
+    private final Color VISITED = Color.LIGHTBLUE;
+
     /**
      * Constructor class
      * @param canvas The canvas on which you want the visualization shown
@@ -31,19 +42,23 @@ public class SolverDFS extends MazeAlgorithm
         this.canvas = canvas;
         this.tm = tm;
 
-        Color VISITED = Color.LIGHTBLUE;
-
+        // set maze into a random maze generated using the Randomized Prim's Algorithm
         maze = GeneratorPrim.getRandomMaze(8, 8, canvas);
-        int visited = maze.setColor(VISITED);
 
+        // Start the AI's position in the top left
+        positionAI = new int[] {0, 0};
 
-        // We'll start in the top left
-        maze.setMarker(0, 0, VISITED);
+        // Initialize the list to store visited cells and moves
+        visitedCells = new ArrayList<>();
+        lastMoves = new ArrayList<>();
 
-        //int VISITED = maze.colorCell();
-
+        // Add 0, 0 to visited cells and color it accordingly
+        visitedCells.add(new int[] {0, 0});
         maze.colorCell(0, 0, VISITED);
-        maze.setRedrawFlag(true);
+
+        // Pass the AI's position matrix into the maze for it to be drawn
+        maze.setPositionAI(positionAI);
+
     }
 
     @Override
@@ -62,17 +77,67 @@ public class SolverDFS extends MazeAlgorithm
     @Override
     public boolean nextStep()
     {
-        ArrayList<Direction> directionsOpen = maze.getMarkerChoices();
-        StringBuilder pos = new StringBuilder();
-        for (Direction d : directionsOpen)
-        {
-            pos.append(d.toString()).append(", ");
-        }
-        System.out.println(directionsOpen.size() + " valid directions: " + pos);
+        // Get the possible open directions
+        ArrayList<Direction> open = maze.getOpenDirections(positionAI);
 
 
-        if (directionsOpen.size() == 1)
-            maze.moveMarker(directionsOpen.get(0));
+
+        // If there's only one direction, let's move in that direction
+        if (open.size() == 1)
+            moveAI(open.get(0));
+
+
+
         return false;
     }
+
+    /**
+     * Returns the opposite of the direction given
+     * @param dir Input direction
+     * @return Opposite of the input direction
+     */
+    private Direction opposite(Direction dir)
+    {
+        // Switch based on provided direction
+        switch(dir)
+        {
+            // Return opposite
+            case RIGHT: return Direction.LEFT;
+            case LEFT:  return Direction.RIGHT;
+            case DOWN:  return Direction.UP;
+            case UP:    return Direction.DOWN;
+        }
+
+        // If no return was given, throw exception
+        throw new IllegalArgumentException("Direction unknown! Only use SolverDFS.opposite() with left/right/up/down");
+    }
+
+    private void moveAI(Direction dir)
+    {
+        // TODO: Maybe some error handling here?
+
+        // Switch statement based on direction
+        switch(dir)
+        {
+            case UP:    positionAI[1]--; break;
+            case DOWN:  positionAI[1]++; break;
+            case LEFT:  positionAI[0]--; break;
+            case RIGHT: positionAI[0]++; break;
+        }
+
+        // Add the move to the list of move's we've made
+        lastMoves.add(dir);
+
+        // Add copy the new position to cell's we've visited
+        visitedCells.add(positionAI.clone());
+
+        // Color the cell as whatever color visited is
+        maze.colorCell(positionAI, VISITED);
+
+        // redraw the maze
+        maze.setRedrawFlag(true);
+    }
+
 }
+
+
