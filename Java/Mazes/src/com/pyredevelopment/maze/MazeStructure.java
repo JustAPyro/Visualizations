@@ -102,6 +102,14 @@ public class MazeStructure implements Serializable
 
     // - - - - - - - - - - Color Method Stuff - - - - - - - - - -
 
+    public int setColor(Color color)
+    {
+        // Warning! Do something for error handling here
+        int key = colors.size();
+        colors.put(key, color);
+        return key;
+    }
+
     public Integer getColorKey(Color color)
     {
         Integer key;
@@ -418,6 +426,7 @@ public class MazeStructure implements Serializable
             return cells[w.x][w.y];
         }
     }
+
 
     /**
      * This returns the value of two cells on either side of a given wall

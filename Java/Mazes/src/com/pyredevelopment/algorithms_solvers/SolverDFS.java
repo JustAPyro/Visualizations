@@ -10,6 +10,8 @@ import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
+import static javafx.scene.AccessibleAttribute.VISITED;
+
 /**
  * This class represents the algorithmic and procedural method of solving a maze using a Depth First Search
  *
@@ -29,10 +31,10 @@ public class SolverDFS extends MazeAlgorithm
         this.canvas = canvas;
         this.tm = tm;
 
-        Color VISTIED = Color.LIGHTBLUE;
+        Color VISITED = Color.LIGHTBLUE;
 
         maze = GeneratorPrim.getRandomMaze(8, 8, canvas);
-
+        int visited = maze.setColor(VISITED);
 
 
         // We'll start in the top left
