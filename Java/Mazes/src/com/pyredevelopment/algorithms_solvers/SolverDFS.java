@@ -6,6 +6,7 @@ import com.pyredevelopment.maze.MazeAlgorithm;
 import com.pyredevelopment.maze.Wall;
 import com.sun.javafx.scene.traversal.Direction;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
@@ -28,12 +29,17 @@ public class SolverDFS extends MazeAlgorithm
         this.canvas = canvas;
         this.tm = tm;
 
+        Color VISTIED = Color.LIGHTBLUE;
+
         maze = GeneratorPrim.getRandomMaze(8, 8, canvas);
 
 
 
         // We'll start in the top left
         maze.setMarker(0, 0);
+
+        //int VISITED = maze.colorCell();
+
         maze.colorCell(0, 0);
     }
 

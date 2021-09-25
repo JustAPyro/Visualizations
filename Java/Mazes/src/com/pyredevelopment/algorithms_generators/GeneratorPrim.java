@@ -237,8 +237,15 @@ public class GeneratorPrim extends MazeAlgorithm
     // This performs a quick generation of prims algorithm on any given canvas, passing back the new maze structure
     public static MazeStructure getRandomMaze(int x, int y, Canvas c)
     {
+        Color   NOT_IN_MAZE = Color.LIGHTGRAY;
+        Color       IN_MAZE = Color.WHITE;
+        Color    WALL_SAVED = Color.ORANGE;
+        Color WALL_SELECTED = Color.RED;
+        Color   WALL_NORMAL = Color.DARKGREY;
+
         // Create a new maze and a list for the working walls
         MazeStructure maze = new MazeStructure(x, y, c);
+        maze.colorAllCells(NOT_IN_MAZE);
         ArrayList<Wall> saved = new ArrayList<Wall>();
 
         // Get a random cell
@@ -246,7 +253,7 @@ public class GeneratorPrim extends MazeAlgorithm
         int rx = rnd.nextInt(x); int ry = rnd.nextInt(y);
 
         // Add the random cell to the maze and the surrounding walls to saved
-        maze.addToMaze(rx, ry);
+        maze.colorCell(rx, ry, IN_MAZE);
         saved.addAll(maze.getSurroundingWalls(rx, ry));
 
         // While there are walls in the list
@@ -263,8 +270,8 @@ public class GeneratorPrim extends MazeAlgorithm
             {
                 maze.breakWall(wall);
 
-                maze.addToMaze(cells[0].getX(), cells[0].getY());
-                maze.addToMaze(cells[1].getX(), cells[1].getY());
+                maze.colorCell(cells[0].getX(), cells[0].getY(), IN_MAZE);
+                maze.colorCell(cells[1].getX(), cells[1].getY(), IN_MAZE);
 
                 ArrayList<Wall> surroundings = maze.getSurroundingWalls(cells[0].getX(), cells[0].getY());
                 surroundings.addAll(maze.getSurroundingWalls(cells[1].getX(), cells[1].getY()));

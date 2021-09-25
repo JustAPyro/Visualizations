@@ -1,3 +1,4 @@
+
 package com.pyredevelopment.maze;
 
 import org.junit.jupiter.api.Assertions;
@@ -123,13 +124,6 @@ class MazeTest
                 });
     }
 
-    // - - - - - - - - - - Test Get Cell (Unit) - - - - - - - - - - -
-    // Note, this goes into The previous get cell ultimately, so only testing one edge case
-    @Test
-    void testGetCellByCell()
-    {
-        assertEquals(maze.getCell(new Unit(5, 10, 'h')), 0);
-    }
 
 
 }
