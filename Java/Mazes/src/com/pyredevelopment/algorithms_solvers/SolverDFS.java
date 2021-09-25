@@ -80,7 +80,13 @@ public class SolverDFS extends MazeAlgorithm
         // Get the possible open directions
         ArrayList<Direction> open = maze.getOpenDirections(positionAI);
 
-
+        // If we have a last move,
+        if (!lastMoves.isEmpty())
+        {
+            //remove it's opposite from open (Let's not go back)
+            Direction lastMove = lastMoves.get(lastMoves.size() - 1);
+            open.remove(opposite(lastMove));
+        }
 
         // If there's only one direction, let's move in that direction
         if (open.size() == 1)
