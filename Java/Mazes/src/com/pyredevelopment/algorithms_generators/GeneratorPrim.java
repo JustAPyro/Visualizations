@@ -5,6 +5,7 @@ import com.pyredevelopment.maze.MazeAlgorithm;
 import com.pyredevelopment.maze.MazeStructure;
 import com.pyredevelopment.maze.Wall;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -31,6 +32,10 @@ https://docs.google.com/document/d/10b-LSSGvkl0g05j54R10NhtFlJdlgE82eGOzjwQn1sg/
 public class GeneratorPrim extends MazeAlgorithm
 {
 
+    Color   NOT_IN_MAZE = Color.LIGHTGRAY;
+    Color       IN_MAZE = Color.WHITE;
+    Color    WALL_SAVED = Color.ORANGE;
+    Color WALL_SELECTED = Color.RED;
 
     final ArrayList<Wall> saved;          // List of saved walls
     int selectedIndex = 0;          // Working index to track
@@ -62,6 +67,7 @@ public class GeneratorPrim extends MazeAlgorithm
         // Since no com.pyredevelopment.maze.MazeStructure was offered in this constructor, we create a new one
         // TODO: This is broken for non-square mazes
         maze = new MazeStructure(8, 8, canvas);
+        maze.colorAllCells(NOT_IN_MAZE);
 
         // Initialized the walls array
         saved = new ArrayList<>();
@@ -113,13 +119,13 @@ public class GeneratorPrim extends MazeAlgorithm
             int rx = rnd.nextInt(8); int ry = rnd.nextInt(8);
 
             // Add the random cell to the maze
-            maze.addToMaze(rx, ry);
+            maze.colorCell(rx, ry, IN_MAZE);
 
             // Get the surrounding walls
             ArrayList<Wall> surround = maze.getSurroundingWalls(rx, ry);
 
             // Color the provided walls in orange
-            maze.colorWall(surround, 10);
+            maze.colorWall(surround, 11);
 
             // Save them to the list
             saved.addAll(surround);
@@ -148,7 +154,7 @@ public class GeneratorPrim extends MazeAlgorithm
             selectedIndex = rnd.nextInt(saved.size());
 
             // Color the wall to indicate it's been picked
-            maze.colorWall(saved.get(selectedIndex), 11);
+            maze.colorWall(saved.get(selectedIndex), 11, false);
 
             // Get the value of the two cells
             Wall[] cells = maze.getCells(saved.get(selectedIndex));
@@ -213,7 +219,7 @@ public class GeneratorPrim extends MazeAlgorithm
         else if (currentStep == 5)
         {
             if (maze.getValue(saved.get(selectedIndex)) == 11)
-                maze.colorWall(saved.get(selectedIndex), 10);
+                maze.colorWall(saved.get(selectedIndex), 10, false);
             saved.remove(selectedIndex);
             tm.selectText(6);
             currentStep = 1;

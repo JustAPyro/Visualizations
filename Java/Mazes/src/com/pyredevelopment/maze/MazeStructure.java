@@ -8,8 +8,7 @@ import javafx.scene.paint.Color;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Objects;
+import java.util.*;
 
 import static java.lang.Math.min;
 
@@ -44,10 +43,10 @@ public class MazeStructure implements Serializable
 
     final int[][] hWalls;     // Represents horizontal maze walls
     final int[][] vWalls;     // Represents vertical maze walls
-    final int[][] cells;    // Represents all maze cell status
+    int[][] cells;    // Represents all maze cell status
 
     Wall marker;
-
+    public Hashtable<Integer, Color> colors = new Hashtable<>();
 
 
     // Create a list of saved walls
@@ -79,6 +78,10 @@ public class MazeStructure implements Serializable
     {
 
 
+        colors.put(0, Color.LIGHTGRAY);
+        colors.put(1, Color.WHITE);
+        colors.put(2, Color.LIGHTGREEN);
+
         // Save the canvas
         this.canvas = canvas;
 
@@ -100,6 +103,68 @@ public class MazeStructure implements Serializable
         cellHeight = min((mazeHeight+20)/height, (mazeWidth+20)/width);
 
     }
+
+    // - - - - - - - - - - Color Method Stuff - - - - - - - - - -
+
+    public Integer getColorKey(Color color)
+    {
+        Integer key;
+        for (Map.Entry<Integer, Color> entry : colors.entrySet())
+        {
+            if (entry.getValue().equals(color))
+            {
+                return entry.getKey();
+            }
+        }
+
+        key = colors.size();
+        colors.put(key, color);
+        return key;
+    }
+
+    public void colorAllCells(Color color)
+    {
+        Integer key = getColorKey(color);
+        for (int row = 0; row < cells.length; row++)
+            for (int col = 0; col < cells[row].length; col++)
+            {
+                cells[row][col] = key;
+            }
+    }
+
+    public void colorCell(int x, int y, Color color)
+    {
+        cells[x][y] = getColorKey(color);
+    }
+
+    public void colorWall(ArrayList<Wall> walls, Color color)
+    {
+        int key = getColorKey(color);
+        for (Wall w : walls)
+        {
+            colorWall(w, key);
+        }
+    }
+
+    public void colorWall(Wall w, Color color)
+    {
+        int key = getColorKey(color);
+        colorWall(w, key);
+
+    }
+
+    private void colorWall(Wall w, int key)
+    {
+        switch (w.o)
+        {
+            case 'h':
+                hWalls[w.x][w.y] = key;
+            case 'v':
+                vWalls[w.x][w.y] = key;
+        }
+    }
+
+    // - ---------------------------------------------------------
 
     /**
      * This draws the maze structure graphically using whatever graphics context is provided
@@ -148,19 +213,16 @@ public class MazeStructure implements Serializable
         // NOTE: Nested for loops are not ideal, obviously, but in this case we know we're working with relatively few
         // items, so it should be okay for this application
 
-        // then draw the CELLS
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                if (cells[x][y] == 0)
-                    gc.setFill(Color.LIGHTGRAY);
-                else if (cells[x][y] == 1)
-                    gc.setFill(Color.WHITE);
-                else if (cells[x][y] == 2)
-                    gc.setFill(Color.LIGHTGREEN);
-                gc.fillRect(cellWidth*x+originX, cellHeight*y+originY, cellWidth, cellHeight);
+
+        for (int rows = 0; rows < height; rows++) {
+            for (int col = 0; col < width; col++) {
+                gc.setFill(colors.get(cells[rows][col]));
+                gc.fillRect(cellWidth*col+originX, cellHeight*rows+originY, cellWidth, cellHeight);
 
             }
         }
+
+
 
         // Start by drawing the VERTICAL LINES
         for (int y = 0; y < width; y++) {
@@ -406,7 +468,7 @@ public class MazeStructure implements Serializable
      * @param w The wall you would like coloreds
      * @param color The index of desired color
      */
-    public void colorWall(Wall w, int color)
+    public void colorWall(Wall w, int color, boolean fd)
     {
         // If it's horizontal change the tag on horizontal walls
         if (w.o == 'h')
