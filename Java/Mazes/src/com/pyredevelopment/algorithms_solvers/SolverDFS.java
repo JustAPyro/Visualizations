@@ -3,16 +3,12 @@ package com.pyredevelopment.algorithms_solvers;
 import com.pyredevelopment.algorithms_generators.GeneratorPrim;
 import com.pyredevelopment.graphical.TextManager;
 import com.pyredevelopment.maze.MazeAlgorithm;
-import com.pyredevelopment.maze.Wall;
 import com.sun.javafx.scene.traversal.Direction;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 
-import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.Stack;
-
-import static javafx.scene.AccessibleAttribute.VISITED;
 
 /**
  * This class represents the algorithmic and procedural method of solving a maze using a Depth First Search
@@ -31,7 +27,10 @@ public class SolverDFS extends MazeAlgorithm
     ArrayList<Direction> lastMoves;
 
     // Decision Stack!
-    Stack<Character> search;
+    private Stack<Character> search = new Stack();
+
+    // Starting our decision stack with ASCII(65) or A
+    private int startASCII = 65;
 
     private final Color VISITED = Color.LIGHTBLUE;
 
@@ -63,7 +62,7 @@ public class SolverDFS extends MazeAlgorithm
         // Pass the AI's position matrix into the maze for it to be drawn
         maze.setPositionAI(positionAI);
 
-        maze.labelChar(2, 2, 'H');
+
 
     }
 
@@ -103,13 +102,49 @@ public class SolverDFS extends MazeAlgorithm
         }
 
         // Otherwise, we have decision (Oh boy!) - Start by labeling each decision
-        maze.labelChar(2, 2, 'A');
+        for (Direction d : open)
+        {
+            // Get the new position if we move that way
+            int[] pos = getNewPosition(positionAI, d);
 
+            // Get the next character we have available to mark with
+            char c = getNextChar();
 
+            // Mark it with the next character we're using to represent decisions
+            maze.labelChar(pos[0], pos[1], c);
+
+            // Add the label to the stack so we can see
+            search.add(c);
+
+        }
 
         return false;
 
     }
+
+    private char getNextChar()
+    {
+        char c = (char) startASCII;
+        startASCII++;
+        return c;
+    }
+
+    private int[] getNewPosition(int[] pos, Direction dir)
+    {
+
+        int[] newPos = positionAI.clone();
+        // Switch statement based on direction
+        switch(dir)
+        {
+            case UP:    newPos[1]--; break;
+            case DOWN:  newPos[1]++; break;
+            case LEFT:  newPos[0]--; break;
+            case RIGHT: newPos[0]++; break;
+        }
+        return newPos;
+    }
+
+
 
     /**
      * Returns the opposite of the direction given

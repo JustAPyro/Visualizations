@@ -224,15 +224,17 @@ public class MazeStructure implements Serializable
         // Create an array to store the open directions
         ArrayList<Direction> open = new ArrayList<Direction>();
 
+        // NOTE: Return values are right->down->left->up, clockwise, starting right- This determines depth first direction
         // Check each wall around provided position and add that direction if possible
-        if (position[1] > 0 && hWalls[position[0]][position[1]-1] == -1)
-            open.add(Direction.UP);
+        if (vWalls[position[0]][position[1]] == -1)
+            open.add(Direction.RIGHT);
         if (hWalls[position[0]][position[1]] == -1)
             open.add(Direction.DOWN);
         if (position[0] > 0 && vWalls[position[0]-1][position[1]] == -1)
             open.add(Direction.LEFT);
-        if (vWalls[position[0]][position[1]] == -1)
-            open.add(Direction.RIGHT);
+        if (position[1] > 0 && hWalls[position[0]][position[1]-1] == -1)
+            open.add(Direction.UP);
+
 
         // Return possible directions
         return open;
