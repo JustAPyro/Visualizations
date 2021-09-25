@@ -41,6 +41,7 @@ public class MazeStructure implements Serializable
 
     private Canvas canvas;
 
+    int markerKey;
     public int[][] hWalls;     // Represents horizontal maze walls
     public int[][] vWalls;     // Represents vertical maze walls
     int[][] cells;    // Represents all maze cell status
@@ -134,6 +135,11 @@ public class MazeStructure implements Serializable
             {
                 cells[row][col] = key;
             }
+    }
+
+    public void colorCell(int x, int y, int key)
+    {
+        cells[x][y] = key;
     }
 
     public void colorCell(int x, int y, Color color)
@@ -309,9 +315,19 @@ public class MazeStructure implements Serializable
 
     }
 
+    public void setMarker(int x, int y, Color color)
+    {
+        marker = new Wall('c', x, y);
+        markerKey = getColorKey(color);
+    }
+
     public void setMarker(int x, int y)
     {
         marker = new Wall('c', x, y);
+        if (markerKey != -1)
+        {
+            colorCell(x, y, markerKey);
+        }
     }
 
     public void colorCell(int x, int y)
@@ -530,6 +546,12 @@ public class MazeStructure implements Serializable
         // Flag that the maze needs to be redrawn
         redrawFlag = true;
 
+    }
+
+    public ArrayList<Direction> getMarkerChoices()
+    {
+
+        return getOpenCellsFrom(marker.x, marker.y);
     }
 
     public void moveMarker(Direction direction)

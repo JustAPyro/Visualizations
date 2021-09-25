@@ -243,19 +243,69 @@ public class GeneratorPrim extends MazeAlgorithm
         Color WALL_SELECTED = Color.RED;
         Color   WALL_NORMAL = Color.DARKGREY;
 
-        // Create a new maze and a list for the working walls
         MazeStructure maze = new MazeStructure(x, y, c);
         maze.colorAllCells(NOT_IN_MAZE);
+        maze.colorAllWalls(WALL_NORMAL);
+
         ArrayList<Wall> saved = new ArrayList<Wall>();
 
         // Get a random cell
         Random rnd = new Random();
         int rx = rnd.nextInt(x); int ry = rnd.nextInt(y);
-
-        // Add the random cell to the maze and the surrounding walls to saved
         maze.colorCell(rx, ry, IN_MAZE);
-        saved.addAll(maze.getSurroundingWalls(rx, ry));
 
+        ArrayList<Wall> surrounding = maze.getSurroundingWalls(rx, ry);
+        maze.colorWall(surrounding, WALL_SELECTED);
+        saved.addAll(surrounding);
+
+        while (saved.size() > 0)
+        {
+            Wall wall = saved.remove(rnd.nextInt(saved.size()));
+            Wall[] cells = maze.getCells(wall);
+
+            int visitKey = maze.getColorKey(IN_MAZE);
+            // If only one of those cells is visited
+            if (maze.getValue(cells[0]) == visitKey ^ maze.getValue(cells[1]) == visitKey)
+            {
+                maze.breakWall(wall);
+                ArrayList<Wall> surroundingWalls = new ArrayList<Wall>();
+                if (maze.getValue(cells[0]) == visitKey)
+                {
+                    maze.colorCell(cells[1].getX(), cells[1].getY());
+                    surroundingWalls.addAll(maze.getSurroundingWalls(cells[1].getX(), cells[1].getY()));
+                }
+                else
+                {
+                    maze.colorCell(cells[0].getX(), cells[0].getY());
+                    surroundingWalls.addAll(maze.getSurroundingWalls(cells[0].getX(), cells[0].getY()));
+                }
+
+                surroundingWalls.remove(wall);
+                for (int i = 0; i < surroundingWalls.size(); i++)
+                {
+                    System.out.println(surroundingWalls.get(i) + " vs " + wall);
+                    if (surroundingWalls.get(i).equals(wall))
+                    {
+                        System.out.println("Removed!");
+                        surroundingWalls.remove(i);
+                    }
+                }
+                maze.colorWall(surroundingWalls, WALL_SAVED);
+                saved.addAll(surroundingWalls);
+
+
+
+
+            }
+
+            saved.remove(wall);
+        }
+
+
+
+
+        return maze;
+/*
         // While there are walls in the list
         while (saved.size() > 0)
         {
@@ -274,6 +324,7 @@ public class GeneratorPrim extends MazeAlgorithm
                 maze.colorCell(cells[1].getX(), cells[1].getY(), IN_MAZE);
 
                 ArrayList<Wall> surroundings = maze.getSurroundingWalls(cells[0].getX(), cells[0].getY());
+                maze.colorWall(surroundings, WALL_SAVED);
                 surroundings.addAll(maze.getSurroundingWalls(cells[1].getX(), cells[1].getY()));
 
                 for (int i = 0; i < surroundings.size(); i++)
@@ -289,6 +340,8 @@ public class GeneratorPrim extends MazeAlgorithm
         }
 
         return maze;
+        */
+
     }
 
     @Override

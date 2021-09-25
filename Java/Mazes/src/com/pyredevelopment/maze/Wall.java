@@ -1,6 +1,7 @@
 package com.pyredevelopment.maze;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * This class represents a specific wall to be used by maze structure
@@ -50,4 +51,16 @@ public class Wall implements Serializable
         return o + " (" + x + ", " + y + ")";
     }
 
+    @Override
+    public boolean equals(Object o1) {
+        if (this == o1) return true;
+        if (o1 == null || getClass() != o1.getClass()) return false;
+        Wall wall = (Wall) o1;
+        return o == wall.o && x == wall.x && y == wall.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(o, x, y);
+    }
 }

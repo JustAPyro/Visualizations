@@ -38,11 +38,11 @@ public class SolverDFS extends MazeAlgorithm
 
 
         // We'll start in the top left
-        maze.setMarker(0, 0);
+        maze.setMarker(0, 0, VISITED);
 
         //int VISITED = maze.colorCell();
 
-        maze.colorCell(0, 0);
+        maze.colorCell(0, 0, VISITED);
     }
 
     @Override
@@ -61,8 +61,15 @@ public class SolverDFS extends MazeAlgorithm
     @Override
     public boolean nextStep()
     {
-        ArrayList<Direction> directionsOpen = maze.getOpenCellsFrom(0, 0);
-        System.out.println(directionsOpen.size());
+        ArrayList<Direction> directionsOpen = maze.getMarkerChoices();
+        StringBuilder pos = new StringBuilder();
+        for (Direction d : directionsOpen)
+        {
+            pos.append(d.toString()).append(", ");
+        }
+        System.out.println(directionsOpen.size() + " valid directions: " + pos);
+
+
         if (directionsOpen.size() == 1)
             maze.moveMarker(directionsOpen.get(0));
         return false;
