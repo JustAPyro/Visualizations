@@ -317,11 +317,24 @@ public class MazeStructure implements Serializable
         return open;
     }
 
-    //----------------------------------------
+    // - - - - - - - - - - Character Label Methods - - - - - - - - - -
     public void labelChar(int x, int y, char c)
     {
         characterLabels.add(new int[] {x, y, (int) c});
         redrawFlag = true;
+    }
+
+    public char consumeLabelChar(int x, int y)
+    {
+        for (int[] c : characterLabels)
+        {
+            if (c[0] == x && c[1] == y)
+            {
+                characterLabels.remove(c);
+                return (char) c[2];
+            }
+        }
+        return 0;
     }
 
     /**

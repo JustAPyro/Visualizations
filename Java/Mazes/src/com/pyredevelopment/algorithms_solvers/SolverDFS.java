@@ -200,7 +200,8 @@ public class SolverDFS extends MazeAlgorithm
             case RIGHT: positionAI[0]++; break;
         }
 
-
+        // if the AI is currently on a char label, consume it (Erase and return it)
+        maze.consumeLabelChar(positionAI[0], positionAI[1]);
 
         // Add the move to the list of move's we've made
         lastMoves.add(dir);
