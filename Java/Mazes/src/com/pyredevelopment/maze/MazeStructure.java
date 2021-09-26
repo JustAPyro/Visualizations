@@ -307,9 +307,9 @@ public class MazeStructure implements Serializable
             open.add(Direction.LEFT);
         if (position[1] > 0 && hWalls[position[0]][position[1]-1] == -1)
             open.add(Direction.UP);
-        if (vWalls[position[0]][position[1]] == -1)
+        if (position[0] < width - 1 && vWalls[position[0]][position[1]] == -1)
             open.add(Direction.RIGHT);
-        if (hWalls[position[0]][position[1]] == -1)
+        if (position[1] < height - 1 && hWalls[position[0]][position[1]] == -1)
             open.add(Direction.DOWN);
 
         // Return possible directions

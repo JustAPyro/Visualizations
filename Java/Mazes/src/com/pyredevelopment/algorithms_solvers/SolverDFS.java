@@ -8,6 +8,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Stack;
 
 /**
@@ -33,7 +34,10 @@ public class SolverDFS extends MazeAlgorithm
     // Starting our decision stack with ASCII(65) or A
     private int startASCII = 65;
 
+    ArrayList<int[]> labeledPositions = new ArrayList<>();
+
     boolean labeledDecision = false;
+    char backtrackingToChar = 0;
 
     private final Color VISITED = Color.LIGHTBLUE;
 
@@ -88,30 +92,53 @@ public class SolverDFS extends MazeAlgorithm
     @Override
     public boolean nextStep()
     {
-        // Get the possible open directions
-        ArrayList<Direction> open = maze.getOpenDirections(positionAI);
 
         // If we're at the finish, don't do anything!
         if (isComplete()) { return true; };
 
-        // If we have a last move, we're probably not going to go there
-        if (!lastMoves.isEmpty())
+        // Get the possible open directions and remove any moves we JUST made if possible
+        ArrayList<Direction> open = maze.getOpenDirections(positionAI);
+        if (!lastMoves.isEmpty()) { open.remove(opposite(lastMoves.peek())); }
+
+
+        if (open.size() == 0 || backtrackingToChar != 0)
         {
-            //remove it's opposite from open (Let's not go back)
-            Direction lastMove = lastMoves.get(lastMoves.size() - 1);
-            open.remove(opposite(lastMove));
+            if (backtrackingToChar == 0)
+                backtrackingToChar = openStack.peek();
+
+            System.out.println("Backtracking");
+            moveToChar(openStack.peek());
+        }
+        // If there is only one option, let's do that!
+        else if (open.size() == 1)
+        {
+            // Move and down the only route and then return
+            moveAI(open.get(0), false);
+            return isComplete();
+        }
+        // Otherwise, if it's more then 1 option and the decision isn't labeled
+        else if (open.size() > 1 && !isLabeled())
+        {
+            // Label the surroundings and return
+            labelSurrounding();
+            return isComplete();
+        }
+        // Otherwise, if it's more then 1 option but it's already labeled
+        else if (open.size() > 1 && isLabeled())
+        {
+            moveAI(open.get(open.size()-1), false);
+            return isComplete();
         }
 
-        // If there's only one direction
-        if (open.size() == 1)
-        {
-            // Move in that direction and end step
-            moveAI(open.get(0), false);
-            return false;
-        }
+
 
         // Otherwise, we have decision (Oh boy!) - Start by labeling each decision
 
+        //labelSurrounding();
+        //labeledDecision = true;
+        return false;
+
+        /*
         if (labeledDecision)
         {
             // Move the last move (Which should be the same as top of the stack)
@@ -140,15 +167,49 @@ public class SolverDFS extends MazeAlgorithm
             openStack.push(c);
         }
 
-        tm.updateText(0, getList("Open", openStack));
+
 
         // set labeled decision to true so we know that this decision has been labeled
         labeledDecision = true;
 
 
+    */
 
+    }
+
+    private boolean isLabeled()
+    {
+        for (int[] label : labeledPositions)
+        {
+            if (Arrays.equals(label, positionAI))
+                return true;
+        }
         return false;
+    }
 
+    private void labelSurrounding()
+    {
+        ArrayList<Direction> open = maze.getOpenDirections(positionAI);
+        if (!lastMoves.isEmpty()) { open.remove(opposite(lastMoves.peek())); }
+
+        labeledPositions.add(positionAI.clone());
+
+        // For each possible direction
+        for (Direction d : open)
+        {
+            // Get the new position if we move that way
+            int[] pos = getNewPosition(positionAI, d);
+
+            // Get the next character we have available to mark with
+            char c = getNextChar();
+
+            // Mark it with the next character we're using to represent decisions
+            maze.labelChar(pos[0], pos[1], c);
+
+            // Add the label to the stack so we can see
+            openStack.push(c);
+        }
+        tm.updateText(0, getList("Open", openStack));
     }
 
     private String getList(String start, Stack<Character> characters)
@@ -224,11 +285,22 @@ public class SolverDFS extends MazeAlgorithm
      */
     private void moveToChar(char c)
     {
+
         // First get the location of the target
         int[] target = maze.getLocationChar(c);
 
+        // Check to see if any of the open positions contain target
+        boolean targetNeighbor = false;
+        for (int[] pos : getOpenPosition())
+        {
+            // If the potential neighboring position equals target
+            if (Arrays.equals(pos, target))
+                // set targetNeighbor to true
+                targetNeighbor = true;
+        }
+
         // If one of the open positions around us contains the target
-        if (getOpenPosition().contains(target))
+        if (targetNeighbor)
         {
             // Check what directions are open
             ArrayList<Direction> openDirections = maze.getOpenDirections(positionAI);
@@ -237,9 +309,14 @@ public class SolverDFS extends MazeAlgorithm
             for (Direction d : openDirections)
             {
                 // Check if the new position moving in that direction is the target
-                if (getNewPosition(positionAI, d) == target)
+                if (Arrays.equals(getNewPosition(positionAI, d), target))
+                {
                     // If so, move there
                     moveAI(d, false);
+                    return;
+
+                }
+
             }
         }
 
@@ -274,6 +351,7 @@ public class SolverDFS extends MazeAlgorithm
 
         // Add the move to the list of move's we've made if we're not backtracking
         if (!backtracking) { lastMoves.push(dir); }
+        if (c == backtrackingToChar) { backtrackingToChar = 0; }
 
         // Color the cell as whatever color visited is
         maze.colorCell(positionAI, VISITED);
