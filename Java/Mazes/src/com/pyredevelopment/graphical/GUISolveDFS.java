@@ -28,9 +28,10 @@ public class GUISolveDFS extends GUI
         headerString = "Depth First Maze Solving";  // Window header
         goalString = "Solve";                       // Complete "Solve" button
 
-        // Insert the DFS text to solve this
+        // Insert the DFS text to display text while we solve it
         tm = new TextManager(textCanvas);
 
+        // Insert the DFS algorithm to manage everything
         alg = new SolverDFS(mazeCanvas, tm);
 
         // Call the super GUI constructor

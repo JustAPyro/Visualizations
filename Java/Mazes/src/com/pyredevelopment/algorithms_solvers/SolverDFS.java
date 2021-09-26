@@ -20,28 +20,29 @@ import java.util.Stack;
 public class SolverDFS extends MazeAlgorithm
 {
 
-    int size = 8;
-    int[] end = {size-1, size-1};
+    // The size of the maze (in cells, W x H)
+    int[] size = {8, 8};
+
+    // The end (Assuming that the end is bottom right for this case
+    int[] end = {size[0]-1, size[1]-1};
 
     // Position of our AI
     int[] positionAI;
 
-    // List of cell's we've visited / moves we've made
-    ArrayList<int[]> visitedCells;
+    // List of moves we've made, to make backtracking easier
     Stack<Direction> lastMoves;
 
-    // Decision Stack!
-    private Stack<Character> openStack = new Stack();
-    private Stack<Character> closedStack = new Stack();
+    // Decision Stack! Used for the AI tree
+    private Stack<Character> openStack = new Stack();   // The decisions we may need to revisit
+    private Stack<Character> closedStack = new Stack(); // The decisions we've already checked
 
-    // Starting our decision stack with ASCII(65) or A
-    private int startASCII = 65;
+    private int startASCII = 65;    // ASCII codes to represent the letters we generate as we go through
+    char backtrackingToChar = 0;    // 0 If not backtracking, otherwise this is the char we are backtracking to
 
+    // List of all positions that have choices we have labeled
     ArrayList<int[]> labeledPositions = new ArrayList<>();
 
-    boolean labeledDecision = false;
-    char backtrackingToChar = 0;
-
+    // Colors used for the generation of the maze and visualization
     private final Color VISITED = Color.LIGHTBLUE;
 
     /**
@@ -59,7 +60,7 @@ public class SolverDFS extends MazeAlgorithm
         tm.addText(1, 0, "Closed List: []");
 
         // set maze into a random maze generated using the Randomized Prim's Algorithm
-        maze = GeneratorPrim.getRandomMaze(size, size, canvas);
+        maze = GeneratorPrim.getRandomMaze(size[0], size[1], canvas);
 
         // Start the AI's position in the top left
         positionAI = new int[] {0, 0};
@@ -82,8 +83,21 @@ public class SolverDFS extends MazeAlgorithm
     @Override
     public void newMazeButton()
     {
-        maze = GeneratorPrim.getRandomMaze(8, 8, canvas);
-        currentStep = 0;
+        maze = GeneratorPrim.getRandomMaze(size[0], size[1], canvas);
+        // Start the AI's position in the top left
+        positionAI = new int[] {0, 0};
+        // Initialize the list to store visited cells and moves
+        lastMoves = new Stack<>();
+
+        maze.colorCell(0, 0, VISITED);
+
+        openStack = new Stack<>();
+        closedStack = new Stack<>();
+
+        startASCII = 65;
+
+        // Pass the AI's position matrix into the maze for it to be drawn
+        maze.setPositionAI(positionAI);
     }
 
     @Override
