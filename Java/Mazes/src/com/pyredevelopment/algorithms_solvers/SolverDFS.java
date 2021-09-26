@@ -26,26 +26,26 @@ public class SolverDFS extends MazeAlgorithm
 {
 
     // The size of the maze (in cells, W x H)
-    int[] size = {8, 8};
+    private final int[] SIZE = {8, 8};
 
     // The end (Assuming that the end is bottom right for this case
-    int[] end = {size[0]-1, size[1]-1};
+    private final int[] END = {SIZE[0]-1, SIZE[1]-1};
 
     // Position of our AI
-    int[] positionAI;
+    private int[] positionAI;
 
     // List of moves we've made, to make backtracking easier
-    Stack<Direction> lastMoves = new Stack<>();
+    private Stack<Direction> lastMoves = new Stack<>();
 
     // Decision Stack! Used for the AI tree
     private Stack<Character> openStack = new Stack<>();   // The decisions we may need to revisit
     private Stack<Character> closedStack = new Stack<>(); // The decisions we've already checked
 
-    private int startASCII = 65;    // ASCII codes to represent the letters we generate as we go through
-    char backtrackingToChar = 0;    // 0 If not backtracking, otherwise this is the char we are backtracking to
+    private int startASCII = 65;            // ASCII codes to represent the letters we generate as we go through
+    private char backtrackingToChar = 0;    // 0 If not backtracking, otherwise this is the char we are backtracking to
 
     // List of all positions that have choices we have labeled
-    ArrayList<int[]> labeledPositions = new ArrayList<>();
+    private ArrayList<int[]> labeledPositions = new ArrayList<>();
 
     // Colors used for the generation of the maze and visualization
     private final Color VISITED = Color.LIGHTBLUE;
@@ -66,7 +66,7 @@ public class SolverDFS extends MazeAlgorithm
         tm.addText(1, 0, "Closed List: []");
 
         // Generate a random maze using Prim's Maze Generator and passing in size and canvas
-        maze = GeneratorPrim.getRandomMaze(size[0], size[1], canvas);
+        maze = GeneratorPrim.getRandomMaze(SIZE[0], SIZE[1], canvas);
 
         // Add 0, 0 to visited cells and color it accordingly
         maze.colorCell(0, 0, VISITED);
@@ -85,7 +85,7 @@ public class SolverDFS extends MazeAlgorithm
     public void newMazeButton()
     {
         // Create a new random maze using the provided size
-        maze = GeneratorPrim.getRandomMaze(size[0], size[1], canvas);
+        maze = GeneratorPrim.getRandomMaze(SIZE[0], SIZE[1], canvas);
 
         // Initialize the list to store visited cells and moves
         lastMoves = new Stack<>();
@@ -93,6 +93,9 @@ public class SolverDFS extends MazeAlgorithm
         // Re-initialize the two stacks we use to search the maze
         openStack = new Stack<>();
         closedStack = new Stack<>();
+
+        // Reset the list storing all the positions we've labeled
+        labeledPositions = new ArrayList<>();
 
         // Since we're creating a new maze reset the ASCII value we're working with
         startASCII = 65;
@@ -113,9 +116,14 @@ public class SolverDFS extends MazeAlgorithm
     public boolean isComplete()
     {
         // Return the Truth value of if the AI is positioned at the end
-        return (Arrays.equals(positionAI, end));
+        return (Arrays.equals(positionAI, END));
     }
 
+    /**
+     * This is called every time the user presses the next step button and represents all the logic required
+     * for the algorithm to take one step
+     * @return True if the maze is solved, false otherwise
+     */
     @Override
     public boolean nextStep()
     {
@@ -127,12 +135,15 @@ public class SolverDFS extends MazeAlgorithm
         ArrayList<Direction> open = maze.getOpenDirections(positionAI);
         if (!lastMoves.isEmpty()) { open.remove(opposite(lastMoves.peek())); }
 
-
+        // If there are no choices or we're backtracking, just continue that and ignore all other logic
         if (open.size() == 0 || backtrackingToChar != 0)
         {
+            // If we don't have a backtracking target yet
             if (backtrackingToChar == 0)
+                // Set our target char to the top of the openstack
                 backtrackingToChar = openStack.peek();
 
+            // Take one step moving towards the character
             moveToChar(openStack.peek());
         }
         // If there is only one option, let's do that!
@@ -152,30 +163,46 @@ public class SolverDFS extends MazeAlgorithm
         // Otherwise, if it's more then 1 option but it's already labeled
         else if (open.size() > 1 && isLabeled())
         {
+            // move the AI towards the character at the top of the open list
             moveAI(open.get(open.size()-1), false);
             return isComplete();
         }
 
-
-        return false;
+        // If none of that applied, just end turn
+        return isComplete();
 
     }
 
+    /**
+     * Checks to see if the cell we are in has any labeled decisions in it
+     * @return True if these decisions have been labeled, false otherwise
+     */
     private boolean isLabeled()
     {
+        // For each position we have labeled
         for (int[] label : labeledPositions)
         {
+            // If it equals our position now
             if (Arrays.equals(label, positionAI))
+
+                // return true
                 return true;
         }
+
+        // Otherwise, return false
         return false;
     }
 
+    /**
+     * Shortcut method to label the decisions on the cell we're currently in
+     */
     private void labelSurrounding()
     {
+        // Get the list of decisions (Minus the direction we just came from, if applicable)
         ArrayList<Direction> open = maze.getOpenDirections(positionAI);
         if (!lastMoves.isEmpty()) { open.remove(opposite(lastMoves.peek())); }
 
+        // Add the current position to places we have labeled
         labeledPositions.add(positionAI.clone());
 
         // For each possible direction
@@ -193,9 +220,12 @@ public class SolverDFS extends MazeAlgorithm
             // Add the label to the stack so we can see
             openStack.push(c);
         }
+
+        // Update the open list to indicate we found new values
         tm.updateText(0, getList("Open", openStack));
     }
 
+    
     private String getList(String start, Stack<Character> characters)
     {
         StringBuilder returnString = new StringBuilder();
