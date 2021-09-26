@@ -72,29 +72,42 @@ public class SolverDFS extends MazeAlgorithm
 
     }
 
+    /**
+     * This is the code that is run when the "New Maze" button is pressed,
+     * it essentially creates a new maze and re-initializes all values to their defaults
+     */
     @Override
     public void newMazeButton()
     {
+        // Create a new random maze using the provided size
         maze = GeneratorPrim.getRandomMaze(size[0], size[1], canvas);
-        // Start the AI's position in the top left
-        positionAI = new int[] {0, 0};
+
         // Initialize the list to store visited cells and moves
         lastMoves = new Stack<>();
 
-        maze.colorCell(0, 0, VISITED);
-
+        // Re-initialize the two stacks we use to search the maze
         openStack = new Stack<>();
         closedStack = new Stack<>();
 
+        // Since we're creating a new maze reset the ASCII value we're working with
         startASCII = 65;
 
-        // Pass the AI's position matrix into the maze for it to be drawn
+        // Color the start position as visited
+        maze.colorCell(0, 0, VISITED);
+
+        // Set the AI's position (Top left) and insert into maze
+        positionAI = new int[] {0, 0};
         maze.setPositionAI(positionAI);
     }
 
+    /**
+     * Checks to see if the maze has been solved
+     * @return true if the AI has reached the end, false otherwise
+     */
     @Override
     public boolean isComplete()
     {
+        // Return the Truth value of if the AI is positioned at the end
         return (Arrays.equals(positionAI, end));
     }
 
