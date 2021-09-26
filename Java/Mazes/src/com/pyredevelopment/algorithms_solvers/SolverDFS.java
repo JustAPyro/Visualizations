@@ -30,7 +30,7 @@ public class SolverDFS extends MazeAlgorithm
     int[] positionAI;
 
     // List of moves we've made, to make backtracking easier
-    Stack<Direction> lastMoves;
+    Stack<Direction> lastMoves = new Stack<>();
 
     // Decision Stack! Used for the AI tree
     private Stack<Character> openStack = new Stack();   // The decisions we may need to revisit
@@ -56,27 +56,19 @@ public class SolverDFS extends MazeAlgorithm
         this.canvas = canvas;
         this.tm = tm;
 
+        // Add text to represent the open and closed lists
         tm.addText(0, 0, "Open List: []");
         tm.addText(1, 0, "Closed List: []");
 
-        // set maze into a random maze generated using the Randomized Prim's Algorithm
+        // Generate a random maze using Prim's Maze Generator and passing in size and canvas
         maze = GeneratorPrim.getRandomMaze(size[0], size[1], canvas);
 
-        // Start the AI's position in the top left
-        positionAI = new int[] {0, 0};
-
-        // Initialize the list to store visited cells and moves
-        visitedCells = new ArrayList<>();
-        lastMoves = new Stack<>();
-
         // Add 0, 0 to visited cells and color it accordingly
-        visitedCells.add(new int[] {0, 0});
         maze.colorCell(0, 0, VISITED);
 
-        // Pass the AI's position matrix into the maze for it to be drawn
+        // Start the AI in the top left, (0, 0) then insert it into the maze structure
+        positionAI = new int[] {0, 0};
         maze.setPositionAI(positionAI);
-
-
 
     }
 
