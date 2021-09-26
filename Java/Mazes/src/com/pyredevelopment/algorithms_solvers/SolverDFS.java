@@ -6,16 +6,21 @@ import com.pyredevelopment.maze.MazeAlgorithm;
 import com.sun.javafx.scene.traversal.Direction;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Stack;
 
 /**
- * This class represents the algorithmic and procedural method of solving a maze using a Depth First Search
+ * Implementation of Depth First Search in maze solving, using com.pyredevelopment.maze.MazeStructure.
+ * @author Luke Hanna (Github.com/JustAPyro | PyreDevelopment.com)
+ * @version 1.0 - Built 9/24/2021 - Update 9/26/21
+ * Objective: Create an easily understandable visualization of depth first searching to solve a maze.
  *
- * @author Luke Hanna (Github.com/JustAPyro / PyreDevelopment.com)
- * @version 1.0 - Built 9/24/2021 - Updated 9/24/21
+ * Details:
+ * TODO: Fill out the details section here
+ *
+ * You can find a write up of the original plans for the project here:
+ * TODO: Add OG plans
  */
 public class SolverDFS extends MazeAlgorithm
 {
@@ -33,8 +38,8 @@ public class SolverDFS extends MazeAlgorithm
     Stack<Direction> lastMoves = new Stack<>();
 
     // Decision Stack! Used for the AI tree
-    private Stack<Character> openStack = new Stack();   // The decisions we may need to revisit
-    private Stack<Character> closedStack = new Stack(); // The decisions we've already checked
+    private Stack<Character> openStack = new Stack<>();   // The decisions we may need to revisit
+    private Stack<Character> closedStack = new Stack<>(); // The decisions we've already checked
 
     private int startASCII = 65;    // ASCII codes to represent the letters we generate as we go through
     char backtrackingToChar = 0;    // 0 If not backtracking, otherwise this is the char we are backtracking to
@@ -48,7 +53,7 @@ public class SolverDFS extends MazeAlgorithm
     /**
      * Constructor class
      * @param canvas The canvas on which you want the visualization shown
-     * @param tm The text manager that will handle the explanation during visulization
+     * @param tm The text manager that will handle the explanation during visualization
      */
     public SolverDFS(Canvas canvas, TextManager tm)
     {
@@ -116,7 +121,7 @@ public class SolverDFS extends MazeAlgorithm
     {
 
         // If we're at the finish, don't do anything!
-        if (isComplete()) { return true; };
+        if (isComplete()) { return true; }
 
         // Get the possible open directions and remove any moves we JUST made if possible
         ArrayList<Direction> open = maze.getOpenDirections(positionAI);
@@ -177,7 +182,7 @@ public class SolverDFS extends MazeAlgorithm
         for (Direction d : open)
         {
             // Get the new position if we move that way
-            int[] pos = getNewPosition(positionAI, d);
+            int[] pos = getNewPosition(d);
 
             // Get the next character we have available to mark with
             char c = getNextChar();
@@ -210,7 +215,7 @@ public class SolverDFS extends MazeAlgorithm
         return c;
     }
 
-    private int[] getNewPosition(int[] pos, Direction dir)
+    private int[] getNewPosition(Direction dir)
     {
 
         int[] newPos = positionAI.clone();
@@ -231,7 +236,7 @@ public class SolverDFS extends MazeAlgorithm
         ArrayList<int[]> openPositions = new ArrayList<>();
         for (Direction d : openDirections)
         {
-            openPositions.add(getNewPosition(positionAI, d));
+            openPositions.add(getNewPosition(d));
         }
         return openPositions;
     }
@@ -288,7 +293,7 @@ public class SolverDFS extends MazeAlgorithm
             for (Direction d : openDirections)
             {
                 // Check if the new position moving in that direction is the target
-                if (Arrays.equals(getNewPosition(positionAI, d), target))
+                if (Arrays.equals(getNewPosition(d), target))
                 {
                     // If so, move there
                     moveAI(d, false);
@@ -324,7 +329,7 @@ public class SolverDFS extends MazeAlgorithm
         // if a label was consumed move an item off the openstack to the closed stack
         if (c != 0) { closedStack.push(openStack.pop()); }
 
-        // Update the lists in textmanager
+        // Update the lists in text manager
         tm.updateText(0, getList("Open", openStack));
         tm.updateText(1, getList("Closed", closedStack));
 
