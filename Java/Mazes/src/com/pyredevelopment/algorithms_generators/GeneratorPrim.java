@@ -6,7 +6,6 @@ import com.pyredevelopment.maze.MazeStructure;
 import com.pyredevelopment.maze.Wall;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
-
 import java.util.ArrayList;
 import java.util.Random;
 

@@ -303,15 +303,14 @@ public class MazeStructure implements Serializable
 
         // NOTE: Return values are right->down->left->up, clockwise, starting right- This determines depth first direction
         // Check each wall around provided position and add that direction if possible
-        if (vWalls[position[0]][position[1]] == -1)
-            open.add(Direction.RIGHT);
-        if (hWalls[position[0]][position[1]] == -1)
-            open.add(Direction.DOWN);
         if (position[0] > 0 && vWalls[position[0]-1][position[1]] == -1)
             open.add(Direction.LEFT);
         if (position[1] > 0 && hWalls[position[0]][position[1]-1] == -1)
             open.add(Direction.UP);
-
+        if (vWalls[position[0]][position[1]] == -1)
+            open.add(Direction.RIGHT);
+        if (hWalls[position[0]][position[1]] == -1)
+            open.add(Direction.DOWN);
 
         // Return possible directions
         return open;
@@ -322,6 +321,17 @@ public class MazeStructure implements Serializable
     {
         characterLabels.add(new int[] {x, y, (int) c});
         redrawFlag = true;
+    }
+
+    public int[] getLocationChar(char target)
+    {
+        for (int[] c : characterLabels)
+        {
+            if (c[2] == target)
+                return new int[] {c[0], c[1]};
+        }
+
+        return new int[0];
     }
 
     public char consumeLabelChar(int x, int y)

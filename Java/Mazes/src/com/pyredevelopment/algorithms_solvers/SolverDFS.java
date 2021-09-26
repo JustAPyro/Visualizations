@@ -24,10 +24,11 @@ public class SolverDFS extends MazeAlgorithm
 
     // List of cell's we've visited / moves we've made
     ArrayList<int[]> visitedCells;
-    ArrayList<Direction> lastMoves;
+    Stack<Direction> lastMoves;
 
     // Decision Stack!
-    private Stack<Character> search = new Stack();
+    private Stack<Character> openStack = new Stack();
+    private Stack<Character> closedStack = new Stack();
 
     // Starting our decision stack with ASCII(65) or A
     private int startASCII = 65;
@@ -47,6 +48,9 @@ public class SolverDFS extends MazeAlgorithm
         this.canvas = canvas;
         this.tm = tm;
 
+        tm.addText(0, 0, "Open List: []");
+        tm.addText(1, 0, "Closed List: []");
+
         // set maze into a random maze generated using the Randomized Prim's Algorithm
         maze = GeneratorPrim.getRandomMaze(8, 8, canvas);
 
@@ -55,7 +59,7 @@ public class SolverDFS extends MazeAlgorithm
 
         // Initialize the list to store visited cells and moves
         visitedCells = new ArrayList<>();
-        lastMoves = new ArrayList<>();
+        lastMoves = new Stack<>();
 
         // Add 0, 0 to visited cells and color it accordingly
         visitedCells.add(new int[] {0, 0});
@@ -87,7 +91,10 @@ public class SolverDFS extends MazeAlgorithm
         // Get the possible open directions
         ArrayList<Direction> open = maze.getOpenDirections(positionAI);
 
-        // If we have a last move,
+        // If we're at the finish, don't do anything!
+        if (isComplete()) { return true; };
+
+        // If we have a last move, we're probably not going to go there
         if (!lastMoves.isEmpty())
         {
             //remove it's opposite from open (Let's not go back)
@@ -99,7 +106,7 @@ public class SolverDFS extends MazeAlgorithm
         if (open.size() == 1)
         {
             // Move in that direction and end step
-            moveAI(open.get(0));
+            moveAI(open.get(0), false);
             return false;
         }
 
@@ -107,8 +114,8 @@ public class SolverDFS extends MazeAlgorithm
 
         if (labeledDecision)
         {
-            // Move the first move (Which should be the same as top of the stack)
-            moveAI(open.get(0));
+            // Move the last move (Which should be the same as top of the stack)
+            moveAI(open.get(open.size()-1), false);
 
             // Set labeledDecision to false to indicate that the next decision is no longer labeled
             labeledDecision = false;
@@ -130,8 +137,10 @@ public class SolverDFS extends MazeAlgorithm
             maze.labelChar(pos[0], pos[1], c);
 
             // Add the label to the stack so we can see
-            search.add(c);
+            openStack.push(c);
         }
+
+        tm.updateText(0, getList("Open", openStack));
 
         // set labeled decision to true so we know that this decision has been labeled
         labeledDecision = true;
@@ -140,6 +149,18 @@ public class SolverDFS extends MazeAlgorithm
 
         return false;
 
+    }
+
+    private String getList(String start, Stack<Character> characters)
+    {
+        StringBuilder returnString = new StringBuilder();
+        returnString.append(start).append(" = [");
+        for (char c : characters)
+        {
+            returnString.append(c).append(", ");
+        }
+        returnString.append("]");
+        return returnString.toString();
     }
 
     private char getNextChar()
@@ -164,6 +185,16 @@ public class SolverDFS extends MazeAlgorithm
         return newPos;
     }
 
+    private ArrayList<int[]> getOpenPosition()
+    {
+        ArrayList<Direction> openDirections = maze.getOpenDirections(positionAI);
+        ArrayList<int[]> openPositions = new ArrayList<>();
+        for (Direction d : openDirections)
+        {
+            openPositions.add(getNewPosition(positionAI, d));
+        }
+        return openPositions;
+    }
 
 
     /**
@@ -187,7 +218,38 @@ public class SolverDFS extends MazeAlgorithm
         throw new IllegalArgumentException("Direction unknown! Only use SolverDFS.opposite() with left/right/up/down");
     }
 
-    private void moveAI(Direction dir)
+    /**
+     * Takes a step towards the target character
+     * @param c The target character you want to move towards
+     */
+    private void moveToChar(char c)
+    {
+        // First get the location of the target
+        int[] target = maze.getLocationChar(c);
+
+        // If one of the open positions around us contains the target
+        if (getOpenPosition().contains(target))
+        {
+            // Check what directions are open
+            ArrayList<Direction> openDirections = maze.getOpenDirections(positionAI);
+
+            // For each of those directions
+            for (Direction d : openDirections)
+            {
+                // Check if the new position moving in that direction is the target
+                if (getNewPosition(positionAI, d) == target)
+                    // If so, move there
+                    moveAI(d, false);
+            }
+        }
+
+        // Otherwise, we have to back track to get to char
+        moveAI(opposite(lastMoves.pop()), true);
+
+
+    }
+
+    private void moveAI(Direction dir, boolean backtracking)
     {
         // TODO: Maybe some error handling here?
 
@@ -201,13 +263,17 @@ public class SolverDFS extends MazeAlgorithm
         }
 
         // if the AI is currently on a char label, consume it (Erase and return it)
-        maze.consumeLabelChar(positionAI[0], positionAI[1]);
+        char c = maze.consumeLabelChar(positionAI[0], positionAI[1]);
 
-        // Add the move to the list of move's we've made
-        lastMoves.add(dir);
+        // if a label was consumed move an item off the openstack to the closed stack
+        if (c != 0) { closedStack.push(openStack.pop()); }
 
-        // Add copy the new position to cell's we've visited
-        visitedCells.add(positionAI.clone());
+        // Update the lists in textmanager
+        tm.updateText(0, getList("Open", openStack));
+        tm.updateText(1, getList("Closed", closedStack));
+
+        // Add the move to the list of move's we've made if we're not backtracking
+        if (!backtracking) { lastMoves.push(dir); }
 
         // Color the cell as whatever color visited is
         maze.colorCell(positionAI, VISITED);
