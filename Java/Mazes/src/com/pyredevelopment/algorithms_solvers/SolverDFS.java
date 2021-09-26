@@ -20,6 +20,9 @@ import java.util.Stack;
 public class SolverDFS extends MazeAlgorithm
 {
 
+    int size = 8;
+    int[] end = {size-1, size-1};
+
     // Position of our AI
     int[] positionAI;
 
@@ -56,7 +59,7 @@ public class SolverDFS extends MazeAlgorithm
         tm.addText(1, 0, "Closed List: []");
 
         // set maze into a random maze generated using the Randomized Prim's Algorithm
-        maze = GeneratorPrim.getRandomMaze(8, 8, canvas);
+        maze = GeneratorPrim.getRandomMaze(size, size, canvas);
 
         // Start the AI's position in the top left
         positionAI = new int[] {0, 0};
@@ -86,7 +89,7 @@ public class SolverDFS extends MazeAlgorithm
     @Override
     public boolean isComplete()
     {
-        return false;
+        return (Arrays.equals(positionAI, end));
     }
 
     @Override
@@ -106,7 +109,6 @@ public class SolverDFS extends MazeAlgorithm
             if (backtrackingToChar == 0)
                 backtrackingToChar = openStack.peek();
 
-            System.out.println("Backtracking");
             moveToChar(openStack.peek());
         }
         // If there is only one option, let's do that!
@@ -117,7 +119,7 @@ public class SolverDFS extends MazeAlgorithm
             return isComplete();
         }
         // Otherwise, if it's more then 1 option and the decision isn't labeled
-        else if (open.size() > 1 && !isLabeled())
+        else if (!isLabeled())
         {
             // Label the surroundings and return
             labelSurrounding();
@@ -131,49 +133,7 @@ public class SolverDFS extends MazeAlgorithm
         }
 
 
-
-        // Otherwise, we have decision (Oh boy!) - Start by labeling each decision
-
-        //labelSurrounding();
-        //labeledDecision = true;
         return false;
-
-        /*
-        if (labeledDecision)
-        {
-            // Move the last move (Which should be the same as top of the stack)
-            moveAI(open.get(open.size()-1), false);
-
-            // Set labeledDecision to false to indicate that the next decision is no longer labeled
-            labeledDecision = false;
-
-            // Return false to end turn
-            return false;
-        }
-
-        // For each possible direction
-        for (Direction d : open)
-        {
-            // Get the new position if we move that way
-            int[] pos = getNewPosition(positionAI, d);
-
-            // Get the next character we have available to mark with
-            char c = getNextChar();
-
-            // Mark it with the next character we're using to represent decisions
-            maze.labelChar(pos[0], pos[1], c);
-
-            // Add the label to the stack so we can see
-            openStack.push(c);
-        }
-
-
-
-        // set labeled decision to true so we know that this decision has been labeled
-        labeledDecision = true;
-
-
-    */
 
     }
 
