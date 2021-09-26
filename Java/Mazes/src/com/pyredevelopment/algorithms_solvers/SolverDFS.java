@@ -225,49 +225,95 @@ public class SolverDFS extends MazeAlgorithm
         tm.updateText(0, getList("Open", openStack));
     }
 
-    
+    /**
+     * Creates a list based on a provided stack of characters to display
+     * @param start The starting text, usually "Open" or "Closed"
+     * @param characters The stack of characters you want inserted into the text
+     * @return The built string ready to be displayed
+     */
     private String getList(String start, Stack<Character> characters)
     {
+        // Start by creating a string builder
         StringBuilder returnString = new StringBuilder();
+
+        // Append the start text and the open brackets
         returnString.append(start).append(" = [");
+
+        // For each character
         for (char c : characters)
         {
+            // Append the character and then insert a comma.
             returnString.append(c).append(", ");
         }
+
+        // Append the closing bracket
         returnString.append("]");
+
+        // Return the results after calling the StringBuilders toString function
         return returnString.toString();
     }
 
+    /**
+     * Calculates the next char that hasn't been using by incrementing and calculating the ASCII value
+     * @return The next Char we have available
+     */
     private char getNextChar()
     {
+        // Get the char from the ASCII value
         char c = (char) startASCII;
+
+        // Increment the ASCII value
         startASCII++;
+
+        // Return the character
         return c;
     }
 
+    /**
+     * Provides what our new position would be after moving in a provided direction
+     * @param dir The direction you want to try moving
+     * @return What our new position would be
+     */
     private int[] getNewPosition(Direction dir)
     {
 
+        // Create an array to store new position, start with our current position
         int[] newPos = positionAI.clone();
+
         // Switch statement based on direction
         switch(dir)
         {
+            // Increment our position based on Direction dir
             case UP:    newPos[1]--; break;
             case DOWN:  newPos[1]++; break;
             case LEFT:  newPos[0]--; break;
             case RIGHT: newPos[0]++; break;
         }
+
+        // Return our new position
         return newPos;
     }
 
+    /**
+     * Returns any open positions around the AI in x, y values
+     * @return The X, Y values of any open positions adjacent to the AI
+     */
     private ArrayList<int[]> getOpenPosition()
     {
+        // First get a list of all open directions we could move in
         ArrayList<Direction> openDirections = maze.getOpenDirections(positionAI);
+
+        // Create a list to store the open POSITIONS as opposed to DIRECTIONS
         ArrayList<int[]> openPositions = new ArrayList<>();
+
+        // For each direction
         for (Direction d : openDirections)
         {
+            // Calculate the position if we moved that way and add to open Positions
             openPositions.add(getNewPosition(d));
         }
+
+        // Return the list of open positions
         return openPositions;
     }
 
@@ -340,6 +386,13 @@ public class SolverDFS extends MazeAlgorithm
 
     }
 
+    /**
+     * This is one of two main utilities allowing the AI to move in a given direction. If backtracking
+     * is false this will push the move to the lastMoves stack, otherwise if it's true (Since we're backtracking)
+     * it will not - Note that moveAI will also automatically consume labels it passes over
+     * @param dir The direction you'd like to move in
+     * @param backtracking If this is true, the AI is backtracking
+     */
     private void moveAI(Direction dir, boolean backtracking)
     {
         // TODO: Maybe some error handling here?
@@ -347,6 +400,7 @@ public class SolverDFS extends MazeAlgorithm
         // Switch statement based on direction
         switch(dir)
         {
+            // Based on the provided direction start by moving the AI
             case UP:    positionAI[1]--; break;
             case DOWN:  positionAI[1]++; break;
             case LEFT:  positionAI[0]--; break;
