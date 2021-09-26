@@ -25,6 +25,8 @@ import java.util.Stack;
 public class SolverDFS extends MazeAlgorithm
 {
 
+    // - - - - - Instance Variables - - - - -
+
     // The size of the maze (in cells, W x H)
     private final int[] SIZE = {8, 8};
 
@@ -49,6 +51,8 @@ public class SolverDFS extends MazeAlgorithm
 
     // Colors used for the generation of the maze and visualization
     private final Color VISITED = Color.LIGHTBLUE;
+
+    // - - - - - Constructor and New Maze Instantiate Method - - - - -
 
     /**
      * Constructor class
@@ -108,16 +112,8 @@ public class SolverDFS extends MazeAlgorithm
         maze.setPositionAI(positionAI);
     }
 
-    /**
-     * Checks to see if the maze has been solved
-     * @return true if the AI has reached the end, false otherwise
-     */
-    @Override
-    public boolean isComplete()
-    {
-        // Return the Truth value of if the AI is positioned at the end
-        return (Arrays.equals(positionAI, END));
-    }
+    // - - - - - Main Algorithm methods (Take next step and check if complete) - - - - -
+
 
     /**
      * This is called every time the user presses the next step button and represents all the logic required
@@ -174,100 +170,110 @@ public class SolverDFS extends MazeAlgorithm
     }
 
     /**
-     * Checks to see if the cell we are in has any labeled decisions in it
-     * @return True if these decisions have been labeled, false otherwise
+     * Checks to see if the maze has been solved
+     * @return true if the AI has reached the end, false otherwise
      */
-    private boolean isLabeled()
+    @Override
+    public boolean isComplete()
     {
-        // For each position we have labeled
-        for (int[] label : labeledPositions)
-        {
-            // If it equals our position now
-            if (Arrays.equals(label, positionAI))
-
-                // return true
-                return true;
-        }
-
-        // Otherwise, return false
-        return false;
+        // Return the Truth value of if the AI is positioned at the end
+        return (Arrays.equals(positionAI, END));
     }
 
+
+    // - - - - - Movement Related Methods - - - - -
+
     /**
-     * Shortcut method to label the decisions on the cell we're currently in
+     * This is one of two main utilities allowing the AI to move in a given direction. If backtracking
+     * is false this will push the move to the lastMoves stack, otherwise if it's true (Since we're backtracking)
+     * it will not - Note that moveAI will also automatically consume labels it passes over
+     * @param dir The direction you'd like to move in
+     * @param backtracking If this is true, the AI is backtracking
      */
-    private void labelSurrounding()
+    private void moveAI(Direction dir, boolean backtracking)
     {
-        // Get the list of decisions (Minus the direction we just came from, if applicable)
-        ArrayList<Direction> open = maze.getOpenDirections(positionAI);
-        if (!lastMoves.isEmpty()) { open.remove(opposite(lastMoves.peek())); }
+        // TODO: Maybe some error handling here?
 
-        // Add the current position to places we have labeled
-        labeledPositions.add(positionAI.clone());
-
-        // For each possible direction
-        for (Direction d : open)
+        // Switch statement based on direction
+        switch(dir)
         {
-            // Get the new position if we move that way
-            int[] pos = getNewPosition(d);
-
-            // Get the next character we have available to mark with
-            char c = getNextChar();
-
-            // Mark it with the next character we're using to represent decisions
-            maze.labelChar(pos[0], pos[1], c);
-
-            // Add the label to the stack so we can see
-            openStack.push(c);
+            // Based on the provided direction start by moving the AI
+            case UP:    positionAI[1]--; break;
+            case DOWN:  positionAI[1]++; break;
+            case LEFT:  positionAI[0]--; break;
+            case RIGHT: positionAI[0]++; break;
         }
 
-        // Update the open list to indicate we found new values
+        // if the AI is currently on a char label, consume it (Erase and return it)
+        char c = maze.consumeLabelChar(positionAI[0], positionAI[1]);
+
+        // if a label was consumed move an item off the openstack to the closed stack
+        if (c != 0) { closedStack.push(openStack.pop()); }
+
+        // Update the lists in text manager
         tm.updateText(0, getList("Open", openStack));
+        tm.updateText(1, getList("Closed", closedStack));
+
+        // Add the move to the list of move's we've made if we're not backtracking
+        if (!backtracking) { lastMoves.push(dir); }
+        if (c == backtrackingToChar) { backtrackingToChar = 0; }
+
+        // Color the cell as whatever color visited is
+        maze.colorCell(positionAI, VISITED);
+
+        // redraw the maze
+        maze.setRedrawFlag(true);
     }
 
+
     /**
-     * Creates a list based on a provided stack of characters to display
-     * @param start The starting text, usually "Open" or "Closed"
-     * @param characters The stack of characters you want inserted into the text
-     * @return The built string ready to be displayed
+     * Takes a step towards the target character
+     * @param c The target character you want to move towards
      */
-    private String getList(String start, Stack<Character> characters)
+    private void moveToChar(char c)
     {
-        // Start by creating a string builder
-        StringBuilder returnString = new StringBuilder();
 
-        // Append the start text and the open brackets
-        returnString.append(start).append(" = [");
+        // First get the location of the target
+        int[] target = maze.getLocationChar(c);
 
-        // For each character
-        for (char c : characters)
+        // Check to see if any of the open positions contain target
+        boolean targetNeighbor = false;
+        for (int[] pos : getOpenPosition())
         {
-            // Append the character and then insert a comma.
-            returnString.append(c).append(", ");
+            // If the potential neighboring position equals target
+            if (Arrays.equals(pos, target))
+                // set targetNeighbor to true
+                targetNeighbor = true;
         }
 
-        // Append the closing bracket
-        returnString.append("]");
+        // If one of the open positions around us contains the target
+        if (targetNeighbor)
+        {
+            // Check what directions are open
+            ArrayList<Direction> openDirections = maze.getOpenDirections(positionAI);
 
-        // Return the results after calling the StringBuilders toString function
-        return returnString.toString();
+            // For each of those directions
+            for (Direction d : openDirections)
+            {
+                // Check if the new position moving in that direction is the target
+                if (Arrays.equals(getNewPosition(d), target))
+                {
+                    // If so, move there
+                    moveAI(d, false);
+                    return;
+
+                }
+
+            }
+        }
+
+        // Otherwise, we have to back track to get to char
+        moveAI(opposite(lastMoves.pop()), true);
+
+
     }
 
-    /**
-     * Calculates the next char that hasn't been using by incrementing and calculating the ASCII value
-     * @return The next Char we have available
-     */
-    private char getNextChar()
-    {
-        // Get the char from the ASCII value
-        char c = (char) startASCII;
-
-        // Increment the ASCII value
-        startASCII++;
-
-        // Return the character
-        return c;
-    }
+    // - - - - - Position Calculation Functions - - - - -
 
     /**
      * Provides what our new position would be after moving in a provided direction
@@ -317,6 +323,107 @@ public class SolverDFS extends MazeAlgorithm
         return openPositions;
     }
 
+    // - - - - - Label Related Methods - - - - -
+
+    /**
+     * Shortcut method to label the decisions on the cell we're currently in
+     */
+    private void labelSurrounding()
+    {
+        // Get the list of decisions (Minus the direction we just came from, if applicable)
+        ArrayList<Direction> open = maze.getOpenDirections(positionAI);
+        if (!lastMoves.isEmpty()) { open.remove(opposite(lastMoves.peek())); }
+
+        // Add the current position to places we have labeled
+        labeledPositions.add(positionAI.clone());
+
+        // For each possible direction
+        for (Direction d : open)
+        {
+            // Get the new position if we move that way
+            int[] pos = getNewPosition(d);
+
+            // Get the next character we have available to mark with
+            char c = getNextChar();
+
+            // Mark it with the next character we're using to represent decisions
+            maze.labelChar(pos[0], pos[1], c);
+
+            // Add the label to the stack so we can see
+            openStack.push(c);
+        }
+
+        // Update the open list to indicate we found new values
+        tm.updateText(0, getList("Open", openStack));
+    }
+
+    /**
+     * Checks to see if the cell we are in has any labeled decisions in it
+     * @return True if these decisions have been labeled, false otherwise
+     */
+    private boolean isLabeled()
+    {
+        // For each position we have labeled
+        for (int[] label : labeledPositions)
+        {
+            // If it equals our position now
+            if (Arrays.equals(label, positionAI))
+
+                // return true
+                return true;
+        }
+
+        // Otherwise, return false
+        return false;
+    }
+
+    // - - - - - Char and String Related Display Functions - - - - -
+
+    /**
+     * Creates a list based on a provided stack of characters to display
+     * @param start The starting text, usually "Open" or "Closed"
+     * @param characters The stack of characters you want inserted into the text
+     * @return The built string ready to be displayed
+     */
+    private String getList(String start, Stack<Character> characters)
+    {
+        // Start by creating a string builder
+        StringBuilder returnString = new StringBuilder();
+
+        // Append the start text and the open brackets
+        returnString.append(start).append(" = [");
+
+        // For each character
+        for (char c : characters)
+        {
+            // Append the character and then insert a comma.
+            returnString.append(c).append(", ");
+        }
+
+        // Append the closing bracket
+        returnString.append("]");
+
+        // Return the results after calling the StringBuilders toString function
+        return returnString.toString();
+    }
+
+    /**
+     * Calculates the next char that hasn't been using by incrementing and calculating the ASCII value
+     * @return The next Char we have available
+     */
+    private char getNextChar()
+    {
+        // Get the char from the ASCII value
+        char c = (char) startASCII;
+
+        // Increment the ASCII value
+        startASCII++;
+
+        // Return the character
+        return c;
+    }
+
+    // - - - - - Utility Functions - - - - -
 
     /**
      * Returns the opposite of the direction given
@@ -337,95 +444,6 @@ public class SolverDFS extends MazeAlgorithm
 
         // If no return was given, throw exception
         throw new IllegalArgumentException("Direction unknown! Only use SolverDFS.opposite() with left/right/up/down");
-    }
-
-    /**
-     * Takes a step towards the target character
-     * @param c The target character you want to move towards
-     */
-    private void moveToChar(char c)
-    {
-
-        // First get the location of the target
-        int[] target = maze.getLocationChar(c);
-
-        // Check to see if any of the open positions contain target
-        boolean targetNeighbor = false;
-        for (int[] pos : getOpenPosition())
-        {
-            // If the potential neighboring position equals target
-            if (Arrays.equals(pos, target))
-                // set targetNeighbor to true
-                targetNeighbor = true;
-        }
-
-        // If one of the open positions around us contains the target
-        if (targetNeighbor)
-        {
-            // Check what directions are open
-            ArrayList<Direction> openDirections = maze.getOpenDirections(positionAI);
-
-            // For each of those directions
-            for (Direction d : openDirections)
-            {
-                // Check if the new position moving in that direction is the target
-                if (Arrays.equals(getNewPosition(d), target))
-                {
-                    // If so, move there
-                    moveAI(d, false);
-                    return;
-
-                }
-
-            }
-        }
-
-        // Otherwise, we have to back track to get to char
-        moveAI(opposite(lastMoves.pop()), true);
-
-
-    }
-
-    /**
-     * This is one of two main utilities allowing the AI to move in a given direction. If backtracking
-     * is false this will push the move to the lastMoves stack, otherwise if it's true (Since we're backtracking)
-     * it will not - Note that moveAI will also automatically consume labels it passes over
-     * @param dir The direction you'd like to move in
-     * @param backtracking If this is true, the AI is backtracking
-     */
-    private void moveAI(Direction dir, boolean backtracking)
-    {
-        // TODO: Maybe some error handling here?
-
-        // Switch statement based on direction
-        switch(dir)
-        {
-            // Based on the provided direction start by moving the AI
-            case UP:    positionAI[1]--; break;
-            case DOWN:  positionAI[1]++; break;
-            case LEFT:  positionAI[0]--; break;
-            case RIGHT: positionAI[0]++; break;
-        }
-
-        // if the AI is currently on a char label, consume it (Erase and return it)
-        char c = maze.consumeLabelChar(positionAI[0], positionAI[1]);
-
-        // if a label was consumed move an item off the openstack to the closed stack
-        if (c != 0) { closedStack.push(openStack.pop()); }
-
-        // Update the lists in text manager
-        tm.updateText(0, getList("Open", openStack));
-        tm.updateText(1, getList("Closed", closedStack));
-
-        // Add the move to the list of move's we've made if we're not backtracking
-        if (!backtracking) { lastMoves.push(dir); }
-        if (c == backtrackingToChar) { backtrackingToChar = 0; }
-
-        // Color the cell as whatever color visited is
-        maze.colorCell(positionAI, VISITED);
-
-        // redraw the maze
-        maze.setRedrawFlag(true);
     }
 
 }
