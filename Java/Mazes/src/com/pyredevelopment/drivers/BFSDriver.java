@@ -1,6 +1,6 @@
 package com.pyredevelopment.drivers;
 
-import com.pyredevelopment.graphical.GUISolveDFS;
+import com.pyredevelopment.graphical.GUISolveBFS;
 import javafx.application.Application;
 
 /**
