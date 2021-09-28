@@ -40,15 +40,19 @@ canvas = Canvas(root, bg="white", width=960, height=625).place(x=20, y=75)
 fontStyle = tkFont.Font(family=fnt, size=14)
 Label(root, font=fontStyle, justify=LEFT, text="Implementation By Luke Hanna\nGithub.com/JustAPyro\nPyreDevelopment.com").place(x=18, y=715)
 
-# Add the footer buttons
+# Add the footer button and label
 Button(root, text="Generate\nNew List", font=button_font, width=15).place(x=795, y=715)
+Label(root,  font= fontStyle, text="Items:").place(x=700, y=715)
+Label(root, font=fontStyle, text="Loop?").place(x=600, y=715)
 
-Label(root, font=fontStyle, text="Loop?").place(x=600, y=700)
+loop_variable = StringVar(root)
+LOOP_TUPLE = ("Loop", "No Loop", "Random")
+loop_control = OptionMenu(root, loop_variable, *LOOP_TUPLE)
+loop_control.config(width=10)
+loop_control.place(x=572, y=750)
 
+Entry(root).place(x=708, y=750, width=40, height=26)
 
-
-
-
-
+# Start the GUI loop
 root.mainloop()
 
