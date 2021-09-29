@@ -27,8 +27,13 @@ public class SolverDFS extends MazeAlgorithm
 
     // - - - - - Instance Variables - - - - -
 
+    // if this is true then it will print some extra date to console
+    private final boolean TEST = true;
+    private long explored = 1;
+    private long total;
+
     // The size of the maze (in cells, W x H)
-    private final int[] SIZE = {8, 8};
+    private final int[] SIZE = {100, 100};
 
     // The end (Assuming that the end is bottom right for this case
     private final int[] END = {SIZE[0]-1, SIZE[1]-1};
@@ -72,6 +77,9 @@ public class SolverDFS extends MazeAlgorithm
         // Generate a random maze using Prim's Maze Generator and passing in size and canvas
         maze = GeneratorPrim.getRandomMaze(SIZE[0], SIZE[1], canvas);
 
+        // calculate the total number of possibilities given size
+        total = (long) SIZE[0] * SIZE[1];
+
         // Add 0, 0 to visited cells and color it accordingly
         maze.colorCell(0, 0, VISITED);
 
@@ -104,6 +112,9 @@ public class SolverDFS extends MazeAlgorithm
         // Since we're creating a new maze reset the ASCII value we're working with
         startASCII = 65;
 
+        // Reset the number of cells we've explored
+        explored = 0;
+
         // Color the start position as visited
         maze.colorCell(0, 0, VISITED);
 
@@ -123,6 +134,7 @@ public class SolverDFS extends MazeAlgorithm
     @Override
     public boolean nextStep()
     {
+
 
         // If we're at the finish, don't do anything!
         if (isComplete()) { return true; }
@@ -159,6 +171,7 @@ public class SolverDFS extends MazeAlgorithm
         // Otherwise, if it's more then 1 option but it's already labeled
         else if (open.size() > 1 && isLabeled())
         {
+
             // move the AI towards the character at the top of the open list
             moveAI(open.get(open.size()-1), false);
             return isComplete();
@@ -215,7 +228,14 @@ public class SolverDFS extends MazeAlgorithm
         tm.updateText(1, getList("Closed", closedStack));
 
         // Add the move to the list of move's we've made if we're not backtracking
-        if (!backtracking) { lastMoves.push(dir); }
+        if (!backtracking)
+        {
+            // Indicate we've explored a new cell
+            explored++;
+            System.out.println(explored + " / " + total + " | " + (explored/(double)total)*100 + "% explored.");
+
+            lastMoves.push(dir);
+        }
         if (c == backtrackingToChar) { backtrackingToChar = 0; }
 
         // Color the cell as whatever color visited is

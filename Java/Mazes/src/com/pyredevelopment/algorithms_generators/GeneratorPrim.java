@@ -302,42 +302,7 @@ public class GeneratorPrim extends MazeAlgorithm
 
 
         return maze;
-/*
-        // While there are walls in the list
-        while (saved.size() > 0)
-        {
-            // Pick a random wall value and remove it, then
-            Wall wall = saved.remove(rnd.nextInt(saved.size()));
 
-            // Get the two cells around this wall
-            Wall[] cells = maze.getCells(wall);
-
-            // If only one of those cells is visited
-            if (maze.getValue(cells[0]) == 1 ^ maze.getValue(cells[1]) == 1)
-            {
-                maze.breakWall(wall);
-
-                maze.colorCell(cells[0].getX(), cells[0].getY(), IN_MAZE);
-                maze.colorCell(cells[1].getX(), cells[1].getY(), IN_MAZE);
-
-                ArrayList<Wall> surroundings = maze.getSurroundingWalls(cells[0].getX(), cells[0].getY());
-                maze.colorWall(surroundings, WALL_SAVED);
-                surroundings.addAll(maze.getSurroundingWalls(cells[1].getX(), cells[1].getY()));
-
-                for (int i = 0; i < surroundings.size(); i++)
-                {
-                    if (surroundings.get(i) == wall || saved.contains(surroundings.get(i)))
-                    {
-                        surroundings.remove(i);
-                    }
-                }
-
-                saved.addAll(surroundings);
-            }
-        }
-
-        return maze;
-        */
 
     }
 
