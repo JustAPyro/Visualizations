@@ -13,6 +13,12 @@ from PIL import Image, ImageTk
 import tkinter.font as tkFont
 import math
 
+
+X = 0
+Y = 1
+HARE = 2
+TORTOISE = 3
+
 # Class to handle all the logic
 class LoopIdentifier:
 
@@ -21,20 +27,31 @@ class LoopIdentifier:
         self.circle_size = 100
         self.half = self.circle_size/2;
         self.canvas = None
-        self.points = [(100, 100), (250, 250), (500, 500), (800, 340), (450, 90)]
+        self.points = [(100, 100, True, True),
+                       (250, 250, False, False),
+                       (500, 500, False, False),
+                       (800, 340, False, False),
+                       (450, 90, False, False)]
 
-        # Load the hare image
+        # Load the hare image and resize it
         self.hare_img = PIL.Image.open("..\\Resources\\Images\\hare.png")
+        self.hare_img = self.hare_img.resize((64, 50), Image.ANTIALIAS)
         self.hare = ImageTk.PhotoImage(self.hare_img)
 
-        # Load the tortoise image
-        #self.tortoise_img = PIL.Image.open("..\\Resources\\Images\\tortoise.png")
-        #self.tortoise = ImageTk.PhotoImage(file="..\\Resources\\Images\\tortoise.png")
+        # Load the tortoise image and resize it
+        self.tortoise_img = PIL.Image.open("..\\Resources\\Images\\tortoise.png")
+        self.tortoise_img = self.tortoise_img.resize((64,  50), Image.ANTIALIAS)
+        self.tortoise = ImageTk.PhotoImage(self.tortoise_img)
 
     def draw(self, target_canvas):
         self.canvas = target_canvas
         for p in self.points:
-            self._circle(p[0], p[1])
+            self._circle(p[X], p[Y])
+
+            if p[HARE]:
+                self.canvas.create_image(p[X]-3, p[Y]-22, image=self.hare)
+            if p[TORTOISE]:
+                self.canvas.create_image(p[X]+5, p[Y]+10, image=self.tortoise)
 
         self._arrow(100, 100, 250, 250)
         self._arrow(250, 250, 500, 500)
@@ -45,8 +62,6 @@ class LoopIdentifier:
 
 
 
-        self.canvas.create_image(50, 50, image=self.hare);
-        #self.canvas.create_image(100, 75, image=self.tortoise);
 
 
 
