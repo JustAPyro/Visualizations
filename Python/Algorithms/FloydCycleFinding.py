@@ -19,6 +19,7 @@ Y = 1
 HARE = 2
 TORTOISE = 3
 
+
 # Node for my linked list!
 class Node:
     # Constructor
@@ -131,7 +132,8 @@ class LoopIdentifier:
 
         # Draw text if relevent
         if len(self.message) > 0:
-            self.canvas.create_text(240, self.canvas.winfo_height()-70, text=self.message, font=font.Font(family="Lucida Grande", size=20));
+            message_fnt = font.Font(family="Lucida Grande", size=20)
+            self.canvas.create_text(240, self.canvas.winfo_height()-70, text=self.message, font=message_fnt)
 
         # TODO: For now, the arrows are hard coded in, but that should be relatively easy to fix
         self._arrow(100, 100, 250, 250)
