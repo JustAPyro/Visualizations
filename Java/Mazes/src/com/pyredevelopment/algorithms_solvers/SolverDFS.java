@@ -33,7 +33,7 @@ public class SolverDFS extends MazeAlgorithm
     private long total;
 
     // The size of the maze (in cells, W x H)
-    private final int[] SIZE = {100, 100};
+    private final int[] SIZE = {6, 6};
 
     // The end (Assuming that the end is bottom right for this case
     private final int[] END = {SIZE[0]-1, SIZE[1]-1};

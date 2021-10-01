@@ -35,24 +35,36 @@ class LoopIdentifier:
     def _circle(self, x, y):
         self.canvas.create_oval(x-self.half, y-self.half, x+self.half, y+self.half)
 
-    def _arrow(self, ax, ay, bx, by):
+    def _arrow(self, ax, ay, head_x, head_y):
+        # Note: Thanks to my friend Daniel for his help on this section- Drawing an arrow is harder then it looks
 
-        distance = math.sqrt((bx-ax)**2 + (by-ay)**2)
+        # Calculate the distance between two points
+        distance = math.sqrt((head_x - ax) ** 2 + (head_y - ay) ** 2)
 
         # recalculate aX/aY based on outer circle - This is the tail of arrow
-        cx = ((bx - ax) / (distance+.001)) * self.half + ax
-        cy = ((by - ay) / (distance+.001)) * self.half + ay
+        tail_x = ((head_x - ax) / (distance + .001)) * self.half + ax
+        tail_y = ((head_y - ay) / (distance + .001)) * self.half + ay
 
         # Recalculate bX/bY - This is the head of the arrow
-        bx = ((ax - bx) / (distance+.001)) * self.half + bx
-        by = ((ay - by) / (distance+.001)) * self.half + by
+        head_x = ((ax - head_x) / (distance + .001)) * self.half + head_x
+        head_y = ((ay - head_y) / (distance + .001)) * self.half + head_y
 
-        ax = 50*math.sin(30) + bx
-        ay = 50*math.cos(30) + by
+        # Calculate where the arrow edges would meet
+        rpx = ((ax - head_x) / (distance + .001)) * self.half + head_x
+        rpy = ((ay - head_y) / (distance + .001)) * self.half + head_y
 
+        # Rotate that point into the upper part of the arrow and draw
+        ux = math.cos(math.pi/5) * (rpx - head_x) - math.sin(math.pi / 5) * (rpy - head_y) + head_x
+        uy = math.sin(math.pi/5) * (rpx - head_x) + math.cos(math.pi / 5) * (rpy - head_y) + head_y
+        self.canvas.create_line(head_x, head_y, ux, uy)
 
-        self.canvas.create_line(cx, cy, bx, by)
-        self.canvas.create_line(bx, by, ax, ay)
+        # rotate that into the lower part of the arrow and draw
+        ux = math.cos(-1*math.pi / 5) * (rpx - head_x) - math.sin(-1 * math.pi / 5) * (rpy - head_y) + head_x
+        uy = math.sin(-1*math.pi / 5) * (rpx - head_x) + math.cos(-1 * math.pi / 5) * (rpy - head_y) + head_y
+        self.canvas.create_line(head_x, head_y, ux, uy)
+
+        self.canvas.create_line(tail_x, tail_y, head_x, head_y)
+
 
 
 # ======================== GUI SET UP ========================
