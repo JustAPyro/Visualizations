@@ -19,7 +19,6 @@ Y = 1
 HARE = 2
 TORTOISE = 3
 
-
 # Node for my linked list!
 class Node:
     # Constructor
@@ -82,6 +81,8 @@ class LoopIdentifier:
     def __init__(self):
         self.turn = -1  # Declare the turn as -1 since we just initialized and haven't started yet
 
+        self.message = ""  # This is where we will put the message we will draw
+
         self.circle_size = 100  # This is the size of the circle nodes on GUI
         self.half = self.circle_size / 2  # Just calculating this at the beginning to save space later
         self.canvas = None  # We also track the canvas we will be drawing on
@@ -128,6 +129,10 @@ class LoopIdentifier:
             # Move on to the next node
             node = node.next
 
+        # Draw text if relevent
+        if len(self.message) > 0:
+            self.canvas.create_text(240, self.canvas.winfo_height()-70, text=self.message, font=font.Font(family="Lucida Grande", size=20));
+
         # TODO: For now, the arrows are hard coded in, but that should be relatively easy to fix
         self._arrow(100, 100, 250, 250)
         self._arrow(250, 250, 500, 500)
@@ -151,7 +156,9 @@ class LoopIdentifier:
             # If the tortoise and the hare are both at this point, it's not first turn, and we haven't moved either
             if node.data[TORTOISE] and node.data[HARE] and not self.turn == 0 \
                     and not moved_tortoise and not moved_hare:
-                # We know we found a loop!
+
+                # We know we found a loop! Let the user know
+                self.message = "We found a loop!\nWe know this because the hare \nand the tortoise are sharing a node."
 
                 # Highlight this node and redraw
                 self.draw(self.canvas)
