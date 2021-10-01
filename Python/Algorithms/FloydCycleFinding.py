@@ -5,8 +5,11 @@
 #
 # Author: Luke Hanna (Github.com/JustAPyro | PyreDevelopment.com)
 # Version: 1.0 | Started 7/28/21 | Updated 7/28/21
-
+import os
 from tkinter import *  # Import Tkinter utilities for GUI
+
+import PIL
+from PIL import Image, ImageTk
 import tkinter.font as tkFont
 import math
 
@@ -14,10 +17,19 @@ import math
 class LoopIdentifier:
 
     def __init__(self):
+        print(os.path.relpath("A:\Programming\Visualizations\Python\Resources\Images.png"))
         self.circle_size = 100
         self.half = self.circle_size/2;
         self.canvas = None
         self.points = [(100, 100), (250, 250), (500, 500), (800, 340), (450, 90)]
+
+        # Load the hare image
+        self.hare_img = PIL.Image.open("..\\Resources\\Images\\hare.png")
+        self.hare = ImageTk.PhotoImage(self.hare_img)
+
+        # Load the tortoise image
+        #self.tortoise_img = PIL.Image.open("..\\Resources\\Images\\tortoise.png")
+        #self.tortoise = ImageTk.PhotoImage(file="..\\Resources\\Images\\tortoise.png")
 
     def draw(self, target_canvas):
         self.canvas = target_canvas
@@ -29,6 +41,12 @@ class LoopIdentifier:
         self._arrow(500, 500, 800, 340)
         self._arrow(800, 340, 450, 90)
         self._arrow(450, 90, 250, 250)
+
+
+
+
+        self.canvas.create_image(50, 50, image=self.hare);
+        #self.canvas.create_image(100, 75, image=self.tortoise);
 
 
 
@@ -70,10 +88,11 @@ class LoopIdentifier:
 # ======================== GUI SET UP ========================
 
 # Create the object to manage the actual logic
-algorithm = LoopIdentifier()
+
 
 # Creating a Tkinter window to hold the GUI
 root = Tk()
+algorithm = LoopIdentifier()
 
 # Some quick overall variables
 fnt = "Lucida Grande"
