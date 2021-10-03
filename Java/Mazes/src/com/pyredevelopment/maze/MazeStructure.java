@@ -46,37 +46,16 @@ public class MazeStructure implements Serializable
     boolean redrawFlag = true;
 
     // Lists any character labels you would like drawn on the maze
-    private ArrayList<int[]> characterLabels = new ArrayList<>();
+    private final ArrayList<int[]> characterLabels = new ArrayList<>();
 
     private Canvas canvas;
 
-    int markerKey;
     public int[][] hWalls;     // Represents horizontal maze walls
     public int[][] vWalls;     // Represents vertical maze walls
     int[][] cells;    // Represents all maze cell status
 
-    Wall marker;
     public Hashtable<Integer, Color> colors = new Hashtable<>();
 
-
-    // Create a list of saved walls
-    ArrayList<Wall> saved = new ArrayList<>();
-
-    /**
-     * Allows you to create a headless theoretical maze structure
-     * @param x
-     * @param y
-     */
-    public MazeStructure(int x, int y)
-    {
-        // Initialize data storage arrays
-        hWalls = new int[x][y-1];
-        vWalls = new int[y-1][x];
-        cells = new int[x][y];
-
-        width = x;
-        height = y;
-    }
 
     /**
      * This create a basic maze structure object to work with
@@ -161,12 +140,8 @@ public class MazeStructure implements Serializable
         Integer key = getColorKey(color);
 
         // Then for each row and column
-        for (int row = 0; row < cells.length; row++)
-            for (int col = 0; col < cells[row].length; col++)
-            {
-                // Tag the cell with the correct color key
-                cells[row][col] = key;
-            }
+        // Tag the cell with the correct color key
+        for (int[] cell : cells) Arrays.fill(cell, key);
     }
 
     /**
@@ -179,38 +154,16 @@ public class MazeStructure implements Serializable
         int key = getColorKey(color);
 
         // For each horizontal wall
-        for (int row = 0; row < hWalls.length; row++)
-        {
-            for (int col = 0; col < hWalls[row].length; col++)
-            {
-                // Set to be equal to the new key
-                hWalls[row][col] = key;
-            }
+        for (int[] hWall : hWalls) {
+            // Set to be equal to the new key
+            Arrays.fill(hWall, key);
         }
 
         // For each vertical wall
-        for (int row = 0; row < vWalls.length; row++)
-        {
-            for (int col = 0; col < vWalls[row].length; col++)
-            {
-                // Set to be equal to the new key
-                vWalls[row][col] = key;
-            }
+        for (int[] vWall : vWalls) {
+            // Set to be equal to the new key
+            Arrays.fill(vWall, key);
         }
-    }
-
-    /**
-     * Colors the provided cell the given color based on key
-     * Overloaded colorCell(int, int, int)
-     *
-     * @param x value of the cell
-     * @param y value of the cell
-     * @param key key for the desired color
-     */
-    public void colorCell(int x, int y, int key)
-    {
-        // Set the cell to desired key, since we have it already
-        cells[x][y] = key;
     }
 
     /**
@@ -299,7 +252,7 @@ public class MazeStructure implements Serializable
     public ArrayList<Direction> getOpenDirections(int[] position)
     {
         // Create an array to store the open directions
-        ArrayList<Direction> open = new ArrayList<Direction>();
+        ArrayList<Direction> open = new ArrayList<>();
 
         // NOTE: Return values are right->down->left->up, clockwise, starting right- This determines depth first direction
         // Check each wall around provided position and add that direction if possible
@@ -466,21 +419,6 @@ public class MazeStructure implements Serializable
 
     }
 
-    public void setMarker(int x, int y, Color color)
-    {
-        marker = new Wall('c', x, y);
-        markerKey = getColorKey(color);
-    }
-
-    public void setMarker(int x, int y)
-    {
-        marker = new Wall('c', x, y);
-        if (markerKey != -1)
-        {
-            colorCell(x, y, markerKey);
-        }
-    }
-
     public void colorCell(int x, int y)
     {
         cells[x][y] = 2;
@@ -625,46 +563,6 @@ public class MazeStructure implements Serializable
         return ret;
     }
 
-    /**\
-     * This colors the walls passed in through the list the provided color
-     * @param walls The walls to be colored
-     * @param color The index of the color you would like
-     */
-    public void colorWall(ArrayList<Wall> walls, int color)
-    {
-
-        for (Wall w : walls)
-        {
-            if (w.o == 'h')
-            {
-                hWalls[w.x][w.y] = color;
-            }
-
-            if (w.o == 'v')
-            {
-                vWalls[w.x][w.y] = color;
-            }
-        }
-
-        // Flag that we need to redraw based on new values
-        redrawFlag = true;
-
-    }
-
-    public ArrayList<Direction> getOpenCellsFrom(int y, int x)
-    {
-        ArrayList<Direction> open = new ArrayList<Direction>();
-        if (y > 0 && hWalls[x][y-1] == -1)
-            open.add(Direction.UP);
-        if (hWalls[x][y] == -1)
-            open.add(Direction.DOWN);
-        if (x > 0 && vWalls[x-1][y] == -1)
-            open.add(Direction.LEFT);
-        if (vWalls[x][y] == -1)
-            open.add(Direction.RIGHT);
-        return open;
-    }
-
     /**
      * Colors a single wall passed in
      * @param w The wall you would like coloreds
@@ -672,6 +570,8 @@ public class MazeStructure implements Serializable
      */
     public void colorWall(Wall w, int color, boolean fd)
     {
+        // TODO: Figure out how to remove FD
+        if (fd) { System.out.println("Have to figure out a way to remove this method"); }
         // If it's horizontal change the tag on horizontal walls
         if (w.o == 'h')
         {
@@ -685,48 +585,6 @@ public class MazeStructure implements Serializable
 
 
         // Flag that we need to redraw based on new values
-        redrawFlag = true;
-    }
-
-    // Add to maze given indexes and then redraw
-    public void addToMaze(int x, int y)
-    {
-        // Set the provided cell to part of the maze
-        cells[x][y] = 1;
-
-        // Flag that the maze needs to be redrawn
-        redrawFlag = true;
-
-    }
-
-    public ArrayList<Direction> getMarkerChoices()
-    {
-        // TODO: SHoudl these really be indexed like this? Rewrite marker, move logic to SolverDFS
-        return getOpenCellsFrom(marker.y, marker.x);
-    }
-
-    public void moveMarker(Direction direction)
-    {
-
-        int x = marker.getX();
-        int y = marker.getY();
-
-        if (direction == Direction.DOWN)
-        {
-            setMarker(x, y + 1);
-        }
-        if (direction == Direction.RIGHT)
-        {
-            setMarker(x+1, y);
-        }
-        if (direction == Direction.LEFT)
-        {
-            setMarker(x-1, y);
-        }
-        if (direction == Direction.UP)
-        {
-            setMarker(x, y-1);
-        }
         redrawFlag = true;
     }
 

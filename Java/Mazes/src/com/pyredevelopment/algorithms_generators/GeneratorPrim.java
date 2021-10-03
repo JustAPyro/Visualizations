@@ -309,6 +309,7 @@ public class GeneratorPrim extends MazeAlgorithm
     @Override
     public void newMazeButton()
     {
+        System.out.println("new maze!");
         setMaze(new MazeStructure(8, 8, canvas));
     }
 }
