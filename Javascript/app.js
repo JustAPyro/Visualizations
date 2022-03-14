@@ -1,54 +1,92 @@
-function main() {
-    const canvas = document.querySelector('#canvas');
-
-    if (!canvas.getContext) {
-        return;
-    }
-
-    let maze = new Maze(canvas, 6, 6);
-    maze.draw();
-
-}
-
 class Maze {
 
-    constructor(canvas, width, height) {
+    /* Primary constructor */
+    constructor(canvas) {
 
-        // Save the canvas as well
+        // Save the canvas we're working with
         this.canvas = canvas;
 
-        // Get the context to draw with
-        this.ctx = canvas.getContext('2d');
+        // create an 2-D array of horizontal walls
+        this.horizontalWalls = new Array(6);
+        for (let i = 0; i < 6; i++) {
+            this.horizontalWalls[i] = new Array(6);
+            for (let j = 0; j < 6; j++) {
+                this.horizontalWalls[i][j] = 1;
+            }
+        }
 
-        // save the width and height
-        this.width = width; this.height = height;
+        // create a 2-D array of vertical walls
+        this.verticalWalls = new Array(6);
+        for (let i = 0; i < 6; i++) {
+            this.verticalWalls[i] = new Array(6);
+            for (let j = 0; j < 6; j++) {
+                this.verticalWalls[i][j] = 0;
+            }
+        }
+
 
     }
 
+    /* Draws the current maze state */
     draw() {
+        const ctx = this.canvas.getContext('2d')
 
-        this.line([0, 0], [0, this.canvas.height], 'black', 1);
-        this.line([0, this.canvas.height], [this.canvas.width, this.canvas.height], 'black', 1);
-        this.line([this.canvas.width, this.canvas.height], [this.canvas.width, 0], 'black', 1);
-        this.line([this.canvas.width, 0], [0, 0], 'black', 1);
-    }
 
-    line(begin, end, stroke = 'black', width = 1) {
-        if (stroke) {
-            this.ctx.strokeStyle = stroke;
+        // set line stroke and line width
+        ctx.lineWidth = 1;
+
+        const size = 50;
+        const color = {
+            0 : 'red',
+            1 : 'blue'
+        };
+
+        for (let r = 0; r < 5; r++) {
+            for (let c = 0; c < 5; c++) {
+
+                ctx.strokeStyle = color[this.horizontalWalls[r][c]];
+
+                // draw horizontal lines
+                ctx.beginPath();
+                ctx.moveTo(c*size, size*r+1);
+                ctx.lineTo((c+1)*size, size*r+1);
+                ctx.stroke();
+
+                ctx.strokeStyle = color[this.verticalWalls[r][c]];
+
+                // draw vertical lines
+                ctx.beginPath();
+                ctx.moveTo(r*size+1, c*size);
+                ctx.lineTo(r*size+1, (c+1)*size);
+                ctx.stroke();
+
+            }
+
+            ctx.strokeStyle = color[this.horizontalWalls[r][5]];
+
+            // Draw final (outer) horizontal lines
+            ctx.beginPath();
+            ctx.moveTo(r*size, 5*size+1);
+            ctx.lineTo((r+1)*size, 5*size+1);
+            ctx.stroke();
+
+            ctx.strokeStyle = color[this.verticalWalls[r][5]];
+
+            // Draw final (outer) vertical lines
+            ctx.beginPath();
+            ctx.moveTo(5*size+1, r*size);
+            ctx.lineTo(5*size+1, (r+1)*size);
+            ctx.stroke();
+
+
         }
 
-        if (width) {
-            this.ctx.lineWidth = width;
-        }
-
-        this.ctx.beginPath();
-        this.ctx.moveTo(...begin);
-        this.ctx.lineTo(...end);
-        this.ctx.stroke();
     }
-
 
 }
 
-main();
+
+
+const canvas = document.querySelector('#canvas');
+let maze = new Maze(canvas);
+maze.draw();
